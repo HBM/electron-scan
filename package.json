@@ -1,0 +1,39 @@
+{
+  "name": "electron-scan",
+  "productName": "electron-scan",
+  "version": "1.0.0",
+  "description": "Electron App für HBK Device Discovery",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && npm run copy-files",
+    "copy-files": "copyfiles -u 1 src/*.html src/*.css dist/",
+    "start": "npm run build && electron-forge start",
+    "dev": "tsc -w",
+    "package": "npm run build && electron-forge package",
+    "make": "npm run build && electron-forge make",
+    "publish": "npm run build && electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [],
+  "author": "Álvaro Torres",
+  "license": "MIT",
+  "dependencies": {
+    "@electron/remote": "^2.1.2",
+    "electron-squirrel-startup": "^1.0.1"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.7.0",
+    "@electron-forge/maker-deb": "^7.7.0",
+    "@electron-forge/maker-rpm": "^7.7.0",
+    "@electron-forge/maker-squirrel": "^7.7.0",
+    "@electron-forge/maker-zip": "^7.7.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.7.0",
+    "@electron-forge/plugin-fuses": "^7.7.0",
+    "@electron/fuses": "^1.8.0",
+    "@types/electron": "^1.6.12",
+    "@types/node": "^20.17.19",
+    "copyfiles": "^2.4.1",
+    "electron": "34.2.0",
+    "typescript": "^5.7.3"
+  }
+}
