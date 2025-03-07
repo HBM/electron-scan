@@ -1,4 +1,11 @@
-const { desktopCapturer, dialog, Menu } = require('@electron/remote');
+declare namespace Electron {
+    interface NativeImage {}
+}
+
+// @ts-ignore
+const electronRemote = require('@electron/remote');
+const { desktopCapturer, dialog, Menu } = electronRemote;
+// @ts-ignore
 const { writeFile } = require('fs');
 
 interface DesktopCapturerSource {
@@ -8,6 +15,8 @@ interface DesktopCapturerSource {
     display_id?: string;
     appIcon?: Electron.NativeImage;
 }
+
+console.log('Renderer script loading');
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM content loaded - initializing screen recorder');

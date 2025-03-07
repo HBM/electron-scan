@@ -1,11 +1,26 @@
-import { app, BrowserWindow, session } from 'electron';
-import * as path from 'node:path';
-import { initialize, enable } from '@electron/remote/main';
+declare const __dirname: string;
+declare const require: any;
+
+const electron = require('electron');
+const { app, BrowserWindow, session } = electron;
+const path = require('path');
+const remoteMain = require('@electron/remote/main');
+const { initialize, enable } = remoteMain;
+
+// from Scan-App
+export * from './HbkScanner'
+export * from './Bonjour'
+export * from './UpnpHelper'
+export * from './UpnpScanner'
+export * from './Scanner'
+export type * from './Types'
 
 initialize();
 
+const electronSquirrelStartup = require('electron-squirrel-startup');
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
+if (electronSquirrelStartup) {
   app.quit();
 }
 

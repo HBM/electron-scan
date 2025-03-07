@@ -1,0 +1,26 @@
+default:
+  image: node:20.8.1
+
+variables:
+  GITLAB_TOKEN: $WEB_TOKEN
+  NPM_TOKEN: $CI_JOB_TOKEN
+  TAG_CI_DISABLED: $CI_COMMIT_TAG
+
+stages:
+  - install
+  - format
+  - build
+  - release
+
+include:
+  - project: 'web/lib/common'
+    file:
+      - '/ci/install.yml'
+      - '/ci/format.yml'
+      - '/ci/build.yml'
+      - '/ci/release.yml'
+
+install:
+  script:
+    - apt-get update && apt-get install -y libpcap-dev
+    - npm ci

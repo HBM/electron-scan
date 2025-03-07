@@ -5,21 +5,67 @@
   "description": "Electron App für HBK Device Discovery",
   "main": "dist/index.js",
   "scripts": {
+    "ci": "npm run ci:eslint && npm run ci:prettier && npm run ci:stylelint && npm run ci:type-check",
+    "ci:eslint": "cross-env-shell eslint --max-warnings 0",
+    "ci:prettier": "cross-env-shell prettier --list-different --ignore-path .gitignore $npm_package_config_files",
+    "ci:semantic-release": "semantic-release",
+    "ci:stylelint": "stylelint --allow-empty-input \"./**/*.scss\"",
+    "ci:type-check": "tsc --noEmit --skipLibCheck ",
     "build": "tsc && npm run copy-files",
-    "copy-files": "copyfiles -u 1 src/*.html src/*.css dist/",
+    "copy-files": "copyfiles -u 1 src/*.html src/*.css dist/ && (if not exist build mkdir build)",
+    "build:scheme": "typescript-json-schema -o dist/Announcement.json --noExtraProps --required src/Types.ts Announcement",
+    "postbuild": "copy package.json dist",
+    "prettier": "prettier --write \"./**/*.{js,jsx,ts,tsx,json,html}\"",
+    "eslint": "cross-env-shell eslint --max-warnings 0 --fix ",
+    "example:bonjour": "esbuild examples/BonjourScan.ts  --bundle --outfile=build/bonjour.cjs --format=cjs --platform=node && node build/bonjour.cjs",
+    "example:hbk": "esbuild examples/hbkScan.ts  --bundle --outfile=build/hbk.cjs --format=cjs --platform=node && node build/hbk.cjs",
+    "example:upnp": "esbuild examples/upnpScan.ts  --bundle --outfile=build/upnp.cjs --format=cjs --platform=node && node build/upnp.cjs",
+    "dev": "esbuild examples/upnpScan.ts  --bundle --outfile=build/build.cjs --format=cjs --platform=node && node build/build.cjs",
+    "mock": "esbuild mock/mock.ts  --bundle --outfile=build/mock.cjs --format=cjs --platform=node && node build/mock.cjs",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:config": "esbuild examples/configTest.ts --bundle --outfile=build/configTest.cjs --format=cjs --platform=node && node build/configTest.cjs",
     "start": "npm run build && electron-forge start",
-    "dev": "tsc -w",
     "package": "npm run build && electron-forge package",
     "make": "npm run build && electron-forge make",
     "publish": "npm run build && electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "standard": {
+    "ignore": [
+      ".storybook/",
+      "src/"
+    ]
+  },
   "keywords": [],
   "author": "Álvaro Torres",
   "license": "MIT",
   "dependencies": {
-    "@electron/remote": "^2.1.2",
-    "electron-squirrel-startup": "^1.0.1"
+    "@eslint/compat": "^1.2.6",
+    "bonjour-service": "^1.3.0",
+    "cross-env-shell": "^7.0.3",
+    "eslint": "^9.20.1",
+    "eslint-config-love": "^118.0.0",
+    "eslint-plugin-html": "^8.1.2",
+    "eslint-plugin-react": "^7.37.4",
+    "events": "^3.3.0",
+    "net": "^1.0.2",
+    "node-upnp-utils": "^1.0.3",
+    "prettier": "^3.5.1",
+    "stylelint": "^16.14.1",
+    "typescript-json-schema": "^0.65.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.7.0",
@@ -30,11 +76,20 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.7.0",
     "@electron-forge/plugin-fuses": "^7.7.0",
     "@electron/fuses": "^1.8.0",
+    "@electron/remote": "^2.1.2",
+    "@testing-library/react": "^16.2.0",
     "@types/electron": "^1.6.12",
-    "@types/node": "^20.17.19",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.13.9",
     "copyfiles": "^2.4.1",
-    "electron": "34.2.0",
+    "electron": "^34.3.1",
+    "electron-squirrel-startup": "^1.0.1",
+    "esbuild": "^0.24.2",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "ts-jest": "^29.2.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   }
 }
