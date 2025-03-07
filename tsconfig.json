@@ -1,15 +1,15 @@
 {
-    "compilerOptions": {
-      "target": "esnext",
+      "compilerOptions": {
+      "target": "es2020",
       "module": "commonjs",
       "moduleResolution": "node",
-      "declaration": true,
       "outDir": "dist",
       "strict": true,
-      "sourceMap": false,
+      "sourceMap": true,
       "allowSyntheticDefaultImports": true,
       "esModuleInterop": true,
-      "rootDir": "src"
+      "rootDir": "src",
+      "noImplicitAny": false
     },
     "include": ["src/**/*"]
   }

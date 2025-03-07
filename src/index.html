@@ -11,19 +11,16 @@
   <body>
       <h1>⚡ Electron Screen Recorder </h1>
 
-      <video></video>
+      <video style="max-width: 100%; height: auto;"></video>
 
-      <button id="startBtn" class="button is-primary">Start</button>
-      <button id="stopBtn" class="button is-warning">Stop</button>
+      <div style="margin: 15px 0;">
+        <button id="startBtn" class="button is-primary">Start</button>
+        <button id="stopBtn" class="button is-warning">Stop</button>
+      </div>
 
       <hr />
 
-      <button id="videoSelectBtn" class="button is-text">Choose a Video Source</button>
-<!-- Add a debug section to help troubleshoot -->
-<div style="margin-top: 20px;">
-  <button onclick="window.testButtons()" class="button is-danger">
-    Test Button References
-  </button>
-</div>
-</body>
+      <button id="videoSelectBtn" class="button is-info">Choose a Video Source</button>
+      
+  </body>
 </html>

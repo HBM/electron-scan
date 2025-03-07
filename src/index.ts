@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, session } from 'electron';
 import * as path from 'node:path';
 import { initialize, enable } from '@electron/remote/main';
 
@@ -17,11 +17,23 @@ const createWindow = (): void => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      //enableRemoteModule: true,
+      webSecurity: false,
       //preload: path.join(__dirname, 'preload.js'),
     },
   });
 
   enable(mainWindow.webContents);
+
+  // CSP
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': ["script-src 'self' 'unsafe-inline' 'unsafe-eval'"]
+      }
+    });
+  });
 
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
