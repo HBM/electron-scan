@@ -42,4 +42,20 @@ module.exports = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+  hooks: {
+    generateAssets: async () => {
+      const fs = require('fs-extra');
+      const path = require('path');
+
+      await fs.copy(
+        path.resolve(__dirname, 'src/index.html'), 
+        path.resolve(__dirname, 'dist/index.html')
+      );
+      
+      await fs.copy(
+        path.resolve(__dirname, 'src/index.css'), 
+        path.resolve(__dirname, 'dist/index.css')
+      );
+    }
+  }
 };

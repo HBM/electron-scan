@@ -1,6 +1,6 @@
 # Electron App für HBK Device Discovery
 
-## To run demo app
+## To run Electron app
 
 npm run build
 npm start

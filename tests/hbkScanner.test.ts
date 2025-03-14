@@ -29,13 +29,11 @@ describe('HBKScanner', () => {
     const lastSocketKey = Object.keys(mockSockets).pop()
     const sendSocket = mockSockets[lastSocketKey!]
     
-    // Verify it was bound correctly
     expect(sendSocket.bind).toHaveBeenCalledWith(31417, '0.0.0.0', expect.any(Function))
     expect(sendSocket.addMembership).toHaveBeenCalledWith('239.255.77.77')
   })
   
   test('should start scanning and listen for messages', () => {
-    // Start scanning
     scanner.startScanning()
     
     // Three sockets should be created now (2 in constructor, 1 in startScanning)
@@ -54,7 +52,7 @@ describe('HBKScanner', () => {
     const deviceListener = jest.fn()
     scanner.addListener(HBKDEVICE, deviceListener)
     
-    // Simulate receiving a message
+    // Message receiving simulation
     const mockMessage = {
       jsonrpc: '2.0',
       method: 'announce',
@@ -65,10 +63,10 @@ describe('HBKScanner', () => {
       }
     }
     
-    // Find the message handler and call it with a mock buffer
+    // Find message handler and call it with a mock buffer
     scanSocket.emit('message', Buffer.from(JSON.stringify(mockMessage)))
     
-    // Verify the event was emitted with parsed data
+    // Verify event was emitted with parsed data
     expect(deviceListener).toHaveBeenCalledWith(mockMessage)
   })
   
@@ -123,7 +121,7 @@ describe('HBKScanner', () => {
       '239.255.77.77'
     )
     
-    // Parse the sent message to verify structure
+    // Parse sent message to verify structure
     const sentData = JSON.parse(sendSocket.send.mock.calls[0][0])
     expect(sentData).toEqual({
       jsonrpc: '2.0',
@@ -136,7 +134,7 @@ describe('HBKScanner', () => {
   test('should stop scanning and close socket', () => {
     scanner.startScanning();
     
-    // Get the scan socket
+    // Get scan socket
     const socketKeys = Object.keys(mockSockets);
     const scanSocket = mockSockets[socketKeys[socketKeys.length - 1]];
 
@@ -150,7 +148,7 @@ describe('HBKScanner', () => {
     // Start scanning (which creates a scanning socket)
     scanner.startScanning()
     
-    // Get the scanning socket (last created)
+    // Get scanning socket (last created)
     const socketKeys = Object.keys(mockSockets)
     const scanSocket = mockSockets[socketKeys[socketKeys.length - 1]]
     
@@ -161,7 +159,7 @@ describe('HBKScanner', () => {
     // Simulate receiving invalid JSON
     scanSocket.emit('message', Buffer.from('invalid-json'))
     
-    // Verify error was emitted
+    // Verify error emittion
     expect(errorListener).toHaveBeenCalledWith(expect.stringContaining('invalid json'))
   })
 })
