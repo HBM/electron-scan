@@ -1,3 +1,8 @@
+// Renderer process verwaltet UI und user interaktionen
+// User konfiguriert Gerät via UI (config modal)
+// Renderer sammelt Konfiguration und sendet es zum main process
+// Main process erhält Konfiguration und ruft eigentliche Funktion für Gerät Konfiguration im HbkScanner
+
 declare namespace Electron {
     interface NativeImage {}
 }
@@ -47,7 +52,7 @@ console.log('Renderer script loading');
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM content loaded - initializing application');
-
+    // Scanner initialisert
     initScanner();
 });
 
@@ -98,7 +103,7 @@ function initScanner() {
     
     configSaveBtn.addEventListener('click', configureDevice);
     
-    // IPC event listeners für scanner/discovery events in Einstieg prozess (index)
+    // IPC event listeners für scanner/discovery events die von Einstieg prozess gesendet werden
 
     ipcRenderer.on('hbk-device-found', (_event: any, device: HbkDevice) => {
         console.log('Renderer: Device found:', device);
@@ -109,8 +114,13 @@ function initScanner() {
         console.error('Renderer: Scanner error:', error);
         showAlert(`Scanner error: ${error}`, 'error');
     });
+
+    ipcRenderer.on('hbk-device-updated', (_event: any, device: HbkDevice) => {
+        console.log('Renderer: Device updated:', device);
+        addOrUpdateDevice(device);
+    });
     
-    // Scanning on/off
+    // Scanning on/off (kommunikation mit main process)
     async function toggleScanning() {
         if (isScanning) {
             try {
@@ -131,7 +141,7 @@ function initScanner() {
                 scanBtn.classList.add('is-danger');
                 scanBtn.textContent = 'Stop Scanning';
                 isScanning = true;
-                showAlert('Scanner started, looking for devices...', 'info');
+                showAlert('HBK Scanner started device search...', 'info');
             } catch (err) {
                 console.error('Failed to start scanning:', err);
                 showAlert('Failed to start scanning', 'error');
@@ -205,7 +215,7 @@ function initScanner() {
         
         configUuid.value = uuid;
         
-        // Erste IPv4 addresse und netmask
+        // IPv4 addresse und netmask
         const ipv4 = device.params.netSettings.interface.ipv4[0];
         if (ipv4) {
             configIp.value = ipv4.address;
@@ -245,10 +255,31 @@ function initScanner() {
             },
             ttl: 120
         };
-        
+        console.log('Sending configuration:', configMessage);
         try {
-            await ipcRenderer.invoke('configure-device', configMessage);
-            showAlert(`Configuration sent to device ${uuid}`, 'success');
+            const response = await ipcRenderer.invoke('configure-device', configMessage);
+            
+            if (response.success) {
+                // Neue Konfig Werte
+                const device = discoveredDevices.get(uuid);
+                if (device && device.params.netSettings.interface.ipv4[0]) {
+                    device.params.netSettings.interface.ipv4[0].address = ip;
+                    device.params.netSettings.interface.ipv4[0].netmask = netmask;
+                    device.params.netSettings.interface.name = interfaceName;
+                    device.params.netSettings.interface.configurationMethod = 'manual';
+                    
+                    // UI aktualisieren
+                    const deviceRow = document.getElementById(`device-${uuid}`);
+                    if (deviceRow) {
+                        const ipCell = deviceRow.querySelector('td:nth-child(4)');
+                        if (ipCell) ipCell.textContent = ip;
+                    }
+
+                    showAlert(`Configuration sent to device ${uuid}`, 'success');
+                }
+            } else {
+                showAlert(`Configuration failed: ${response.error}`, 'error');
+            }
             configModal.classList.remove('is-active');
         } catch (err) {
             console.error('Failed to configure device:', err);

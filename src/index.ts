@@ -1,3 +1,8 @@
+// Main process kontrolliert the application lifecycle und verwaltet die system resourcen
+// HBK scanning gestartet und rennt in main process
+// Sanner entdeckt Gerät und sendet event das von den main process gefangen wird. main process sendet event zum renderer und renderer erhält event und aktualisert UI
+// Scann wird von Button im Renderer gestartet/gestoppt und eigentliche HbkScanner Funktionen werden im main process angerufen 
+
 declare const __dirname: string;
 declare const require: any;
 
@@ -16,6 +21,7 @@ export * from './UpnpScanner'
 export * from './Scanner'
 export type * from './Types'
 
+// HbkScanner Modul verwaltet device discovery/scanning und konfiguration
 import { HBKScanner } from './HbkScanner';
 import { HBKDEVICE } from './Types';
 
@@ -31,8 +37,8 @@ if (electronSquirrelStartup) {
 // Scanner im modul niveau initialisiert damit es von IPC Handlern angesprochen werden kann 
 let scanner: HBKScanner | null = null;
 
+// Electron setup
 const createWindow = (): void => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -104,6 +110,14 @@ function initializeScanner(mainWindow: BrowserWindowType) {
       mainWindow.webContents.send('hbk-scanner-error', error);
     }
   });
+
+  // Device update listener
+  scanner.addListener('device-updated' as any, (device) => {
+    console.log('Main process: Device updated:', device);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('hbk-device-updated', device);
+    }
+  });
   
   // IPC Handlern für scanner kontrolle (events von renderer und renderer anfragen)
 
@@ -120,9 +134,19 @@ function initializeScanner(mainWindow: BrowserWindowType) {
   });
   
   // Geräte Konfiguration
-  ipcMain.handle('configure-device', (_event, config) => {
+  ipcMain.handle('configure-device', async (_event, config) => {
     console.log('Main process: Configuring device:', config);
-    scanner?.configureDevice(config);
+    try {
+      const result = scanner?.configureDevice(config);
+      console.log('Configuration result:', result);
+      return { success: true, result };
+    } catch (error: unknown) {
+        console.error('Error configuring device:', error);
+        if (error instanceof Error) {
+          return { success: false, error: error.message };
+        }
+        return { success: false, error: String(error) };
+    }
   });
 
   mainWindow.webContents.send('scanner-status', 'stopped');
