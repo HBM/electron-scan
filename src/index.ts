@@ -105,8 +105,9 @@ function initializeScanner(mainWindow: BrowserWindowType) {
     }
   });
   
-  // IPC Handlern für scanner kontrolle (events von renderer)
-  ipcMain.on('start-scanning', () => {
+  // IPC Handlern für scanner kontrolle (events von renderer und renderer anfragen)
+
+  ipcMain.handle('start-scanning', () => {
     console.log('Main process: Starting HBK device scanner');
     scanner?.startScanning();
     mainWindow.webContents.send('scanner-status', 'running');
@@ -124,9 +125,7 @@ function initializeScanner(mainWindow: BrowserWindowType) {
     scanner?.configureDevice(config);
   });
 
-  // Scanner automatisch anfangen
-  scanner.startScanning();
-  mainWindow.webContents.send('scanner-status', 'running');
+  mainWindow.webContents.send('scanner-status', 'stopped');
 }
 
 // This method will be called when Electron has finished

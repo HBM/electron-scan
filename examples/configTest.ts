@@ -8,13 +8,13 @@ console.log('Starting HBK device scanner...')
 scanner.addListener(HBKDEVICE, (device) => {
   console.log('Found device:', JSON.stringify(device, null, 2))
   
-  // Extract the UUID of the discovered device
+  // UUID of the discovered device
   const uuid = device.params?.device?.uuid
   
   if (uuid) {
     console.log(`Configuring device with UUID: ${uuid}`)
     
-    // Configuration message for device
+    // Configuration message
     const configMessage = {
       device: {
         uuid: uuid

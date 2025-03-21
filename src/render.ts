@@ -52,7 +52,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initScanner() {
-    // Device scanning elements
+    ipcRenderer.on('scanner-status', (_event, status) => {
+        console.log('Scanner status updated:', status);
+        if (status === 'running') {
+            scanBtn.classList.remove('is-primary');
+            scanBtn.classList.add('is-danger');
+            scanBtn.textContent = 'Stop Scanning';
+            isScanning = true;
+        } else {
+            scanBtn.classList.remove('is-danger');
+            scanBtn.classList.add('is-primary');
+            scanBtn.textContent = 'Start Scanning';
+            isScanning = false;
+        }
+    });
+    
+    // Device scanning Elemente
     const scanBtn = document.getElementById('scanBtn') as HTMLButtonElement;
     const deviceList = document.getElementById('deviceList') as HTMLTableSectionElement;
     const scannerAlerts = document.getElementById('scannerAlerts') as HTMLDivElement;
@@ -66,11 +81,10 @@ function initScanner() {
     const configSaveBtn = document.getElementById('configSaveBtn') as HTMLButtonElement;
     const cancelConfigBtns = document.querySelectorAll('.cancel-config, .modal-background, .delete');
     
-    // Store discovered devices
     const discoveredDevices = new Map();
     let isScanning = false;
     
-    // Set up event handlers
+    // event handlers
     scanBtn.addEventListener('click', toggleScanning);
     deleteAlertBtn.addEventListener('click', () => {
         scannerAlerts.style.display = 'none';
@@ -84,7 +98,8 @@ function initScanner() {
     
     configSaveBtn.addEventListener('click', configureDevice);
     
-    // IPC event listeners for scanner events
+    // IPC event listeners für scanner/discovery events in Einstieg prozess (index)
+
     ipcRenderer.on('hbk-device-found', (_event: any, device: HbkDevice) => {
         console.log('Renderer: Device found:', device);
         addOrUpdateDevice(device);
@@ -96,7 +111,7 @@ function initScanner() {
         showAlert(`Scanner error: ${error}`, 'error');
     });
     
-    // Toggle scanning on/off
+    // Scanning on/off
     async function toggleScanning() {
         if (isScanning) {
             try {
@@ -125,36 +140,32 @@ function initScanner() {
         }
     }
     
-    // Add or update device in the table
     function addOrUpdateDevice(device: HbkDevice) {
         const uuid = device.params.device.uuid;
         
-        // Store device in map
+        // Gerät speichern
         discoveredDevices.set(uuid, device);
         
-        // Remove "no devices" row if it exists
         const noDevicesRow = document.getElementById('no-devices');
         if (noDevicesRow) {
             noDevicesRow.remove();
         }
         
-        // Check if device is already in table
         let deviceRow = document.getElementById(`device-${uuid}`);
         
         if (!deviceRow) {
-            // Create new row
             deviceRow = document.createElement('tr');
             deviceRow.id = `device-${uuid}`;
             deviceRow.className = 'device-row';
             deviceList.appendChild(deviceRow);
             
-            // Add click event to show details
+            // Gerät details
             deviceRow.addEventListener('click', () => {
                 showDeviceDetails(uuid);
             });
         }
         
-        // Get the first IPv4 address
+        // IPv4 addresse
         const ipAddress = device.params.netSettings.interface.ipv4[0]?.address || 'N/A';
         
         // Update row content
@@ -171,15 +182,15 @@ function initScanner() {
             </td>
         `;
         
-        // Add event listener to the configure button
+        // Event listener zum Konfiguration button
         const configureBtn = deviceRow.querySelector('.configure-btn') as HTMLButtonElement;
         configureBtn.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevent row click
+            event.stopPropagation();
             openConfigModal(uuid);
         });
     }
     
-    // Open configuration modal
+    // Konfiguration
     function openConfigModal(uuid: string) {
         const device = discoveredDevices.get(uuid);
         if (!device) {
@@ -187,24 +198,21 @@ function initScanner() {
             return;
         }
         
-        // Populate modal fields
         configUuid.value = uuid;
         
-        // Get first IPv4 address and netmask
+        // Erste IPv4 addresse und netmask
         const ipv4 = device.params.netSettings.interface.ipv4[0];
         if (ipv4) {
             configIp.value = ipv4.address;
             configNetmask.value = ipv4.netmask;
         }
         
-        // Set interface name
+        // Interface Name
         configInterface.value = device.params.netSettings.interface.name;
         
-        // Show modal
         configModal.classList.add('is-active');
     }
     
-    // Configure device
     async function configureDevice() {
         const uuid = configUuid.value;
         const ip = configIp.value;
@@ -212,7 +220,7 @@ function initScanner() {
         const interfaceName = configInterface.value;
         
         if (!uuid || !ip || !netmask) {
-            showAlert('Please fill all required fields', 'error');
+            showAlert('Fill all required fields', 'error');
             return;
         }
         
@@ -243,22 +251,19 @@ function initScanner() {
         }
     }
     
-    // Show device details (could expand in the future)
     function showDeviceDetails(uuid: string) {
         const device = discoveredDevices.get(uuid);
         console.log('Device details:', device);
-        // Future: Add a detailed view of device properties
+        // mehr Details zeigen??
     }
     
-    // Show alert message
+    // Alert Nachrichten
     function showAlert(message: string, type: 'success' | 'error' | 'info') {
         alertMessage.textContent = message;
         scannerAlerts.style.display = 'block';
         
-        // Remove all type classes
         scannerAlerts.classList.remove('is-success', 'is-danger', 'is-info');
         
-        // Add the appropriate class
         switch (type) {
             case 'success':
                 scannerAlerts.classList.add('is-success');
@@ -271,7 +276,6 @@ function initScanner() {
                 break;
         }
         
-        // Auto hide after 5 seconds for success messages
         if (type === 'success') {
             setTimeout(() => {
                 scannerAlerts.style.display = 'none';
