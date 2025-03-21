@@ -9,18 +9,91 @@
     <script defer src="render.js"></script>
   </head>
   <body>
-      <h1>🔍 HBK Device Discovery </h1>
-
-      <video style="max-width: 100%; height: auto;"></video>
-
-      <div style="margin: 15px 0;">
-        <button id="startBtn" class="button is-primary">Start</button>
-        <button id="stopBtn" class="button is-warning">Stop</button>
+    <div class="container">
+      <h1 class="title">🔍 HBK Device Discovery</h1>
+      
+      <!-- Device Scanner -->
+      <div id="scanner-tab" class="tab-content">
+        <div class="box">
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <button id="scanBtn" class="button is-primary">Start Scanning</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Alerts -->
+          <div id="scannerAlerts" class="notification is-light mb-4" style="display: none;">
+            <button class="delete"></button>
+            <p id="alertMessage"></p>
+          </div>
+          
+          <!-- Geräte Liste -->
+          <div class="block">
+            <h2 class="subtitle">Discovered Devices</h2>
+            <div class="table-container">
+              <table class="table is-fullwidth is-hoverable">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>UUID</th>
+                    <th>IP Address</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="deviceList">
+                  <tr id="no-devices">
+                    <td colspan="5" class="has-text-centered">No devices found yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <hr />
-
-      <button id="videoSelectBtn" class="button is-info">Choose a Video Source</button>
-      
+      <!-- Geräte Knofiguration -->
+      <div id="configModal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Configure Device</p>
+            <button class="delete" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <div class="field">
+              <label class="label">Device UUID</label>
+              <div class="control">
+                <input id="configUuid" class="input" type="text" readonly>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">IP Address</label>
+              <div class="control">
+                <input id="configIp" class="input" type="text" placeholder="192.168.1.100">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Netmask</label>
+              <div class="control">
+                <input id="configNetmask" class="input" type="text" placeholder="255.255.255.0">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Interface Name</label>
+              <div class="control">
+                <input id="configInterface" class="input" type="text" value="eth0">
+              </div>
+            </div>
+          </section>
+          <footer class="modal-card-foot">
+            <button id="configSaveBtn" class="button is-success">Apply Configuration</button>
+            <button class="button cancel-config">Cancel</button>
+          </footer>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

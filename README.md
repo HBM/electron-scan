@@ -1,9 +1,14 @@
 # Electron App für HBK Device Discovery
 
-## To run Electron app
+## To run HBK Device Discovery Electron app
 
 npm run build
+
 npm start
+
+### In separate terminal
+
+npm run mock
 
 ## To run automated tests
 

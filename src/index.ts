@@ -3,17 +3,21 @@ declare const require: any;
 
 const electron = require('electron');
 const { app, BrowserWindow, session } = electron;
+import { ipcMain, type BrowserWindow as BrowserWindowType } from 'electron';
 const path = require('path');
 const remoteMain = require('@electron/remote/main');
 const { initialize, enable } = remoteMain;
 
-// from Scan-App
+// von Scan-App
 export * from './HbkScanner'
 export * from './Bonjour'
 export * from './UpnpHelper'
 export * from './UpnpScanner'
 export * from './Scanner'
 export type * from './Types'
+
+import { HBKScanner } from './HbkScanner';
+import { HBKDEVICE } from './Types';
 
 initialize();
 
@@ -24,6 +28,9 @@ if (electronSquirrelStartup) {
   app.quit();
 }
 
+// Scanner im modul niveau initialisiert damit es von IPC Handlern angesprochen werden kann 
+let scanner: HBKScanner | null = null;
+
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -32,9 +39,7 @@ const createWindow = (): void => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      //enableRemoteModule: true,
       webSecurity: false,
-      //preload: path.join(__dirname, 'preload.js'),
     },
   });
 
@@ -58,6 +63,8 @@ const createWindow = (): void => {
 
   mainWindow.webContents.on('did-finish-load', () => {
     console.log('Page loaded successfully');
+    // Scanner initialisiert
+    initializeScanner(mainWindow);
   });
   
   mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
@@ -76,6 +83,51 @@ const createWindow = (): void => {
     `);
   });
 };
+
+function initializeScanner(mainWindow: BrowserWindowType) {
+  console.log('Initializing HBK Scanner in main process');
+
+  scanner = new HBKScanner();
+  
+  // Weiterleitung von discovery events an den Renderer
+  scanner.addListener(HBKDEVICE, (device) => {
+    console.log('Main process: Found HBK device:', device);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('hbk-device-found', device);
+    }
+  });
+  
+  // Error events
+  scanner.addListener('error', (error) => {
+    console.error('Main process: Scanner error:', error);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('hbk-scanner-error', error);
+    }
+  });
+  
+  // IPC Handlern für scanner kontrolle (events von renderer)
+  ipcMain.on('start-scanning', () => {
+    console.log('Main process: Starting HBK device scanner');
+    scanner?.startScanning();
+    mainWindow.webContents.send('scanner-status', 'running');
+  });
+  
+  ipcMain.handle('stop-scanning', () => {
+    console.log('Main process: Stopping HBK device scanner');
+    scanner?.stopScanning();
+    mainWindow.webContents.send('scanner-status', 'stopped');
+  });
+  
+  // Geräte Konfiguration
+  ipcMain.handle('configure-device', (_event, config) => {
+    console.log('Main process: Configuring device:', config);
+    scanner?.configureDevice(config);
+  });
+
+  // Scanner automatisch anfangen
+  scanner.startScanning();
+  mainWindow.webContents.send('scanner-status', 'running');
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -96,6 +148,10 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
+  if (scanner) {
+    scanner.stopScanning();
+    scanner = null;
+  }
   if (process.platform !== 'darwin') {
     app.quit();
   }

@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge } = require('electron');
 const remote = require('@electron/remote');
 
 contextBridge.exposeInMainWorld('electronAPI', {

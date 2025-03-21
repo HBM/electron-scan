@@ -4,224 +4,278 @@ declare namespace Electron {
 
 // @ts-ignore
 const electronRemote = require('@electron/remote');
-const { desktopCapturer, dialog, Menu } = electronRemote;
-// @ts-ignore
-const { writeFile } = require('fs');
+const { dialog, Menu } = electronRemote;
+const { ipcRenderer } = require('electron');
 
-interface DesktopCapturerSource {
-    id: string;
-    name: string;
-    thumbnail: Electron.NativeImage;
-    display_id?: string;
-    appIcon?: Electron.NativeImage;
+interface HbkDevice {
+    jsonrpc: string;
+    method: string;
+    params: {
+        apiVersion: string;
+        device: {
+            familyType: string;
+            firmwareVersion: string;
+            name: string;
+            type: string;
+            uuid: string;
+        };
+        expiration: number;
+        netSettings: {
+            interface: {
+                configurationMethod: string;
+                description: string;
+                ipv4: Array<{
+                    address: string;
+                    netmask: string;
+                }>;
+                ipv6: Array<{
+                    address: string;
+                    prefix: number;
+                }>;
+                name: string;
+                type: string;
+            };
+        };
+        services: Array<{
+            port: number;
+            type: string;
+        }>;
+    };
 }
 
 console.log('Renderer script loading');
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM content loaded - initializing screen recorder');
-    // Buttons
-    const videoElement = document.querySelector('video') as HTMLVideoElement;
-    const startBtn = document.getElementById('startBtn') as HTMLButtonElement;
-    const stopBtn = document.getElementById('stopBtn') as HTMLButtonElement;
-    const videoSelectBtn = document.getElementById('videoSelectBtn') as HTMLButtonElement;
+    console.log('DOM content loaded - initializing application');
 
-    if (!videoElement || !startBtn || !stopBtn || !videoSelectBtn) {
-        console.error('Could not find all required elements:', {
-            videoElement: !!videoElement,
-            startBtn: !!startBtn,
-            stopBtn: !!stopBtn,
-            videoSelectBtn: !!videoSelectBtn
-        });
-        return;
-    }
-
-    // Initial button state
-    startBtn.disabled = true;
-    stopBtn.disabled = true;
-
-    let mediaRecorder: MediaRecorder | null = null; // MediaRecorder instance to capture footage
-    const recordedChunks: Blob[] = [];
-
-    // Setup event handlers
-    videoSelectBtn.addEventListener('click', () => {
-        console.log('Video select button clicked');
-        getVideoSources();
-    });
-    
-    startBtn.addEventListener('click', () => {
-        console.log('Start button clicked');
-        startRecording();
-    });
-    
-    stopBtn.addEventListener('click', () => {
-        console.log('Stop button clicked');
-        stopRecording();
-    });
-
-    // Get available video sources
-    async function getVideoSources(): Promise<void> {
-        try {
-            console.log('Getting video sources...');
-            const inputSources = await desktopCapturer.getSources({
-                types: ['window', 'screen']
-            });
-
-            console.log('Found sources:', inputSources.length);
-
-            const videoOptionsMenu = Menu.buildFromTemplate(
-                inputSources.map((source: DesktopCapturerSource) => {
-                    return {
-                        label: source.name,
-                        click: () => selectSource(source)
-                    };
-                })
-            );
-
-            videoOptionsMenu.popup();
-        } catch (err) {
-            console.error('Error getting video sources:', err);
-        }
-    }
-
-    // Function to start recording
-    function startRecording(): void {
-        console.log('Starting recording, recorder available:', !!mediaRecorder);
-        if (!mediaRecorder) {
-            console.error('No media source selected');
-            return;
-        }
-
-        // Clear previous recording chunks
-        recordedChunks.length = 0;
-        console.log('Starting media recorder');
-
-        try {
-            mediaRecorder.start();
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            startBtn.classList.add('is-danger');
-            startBtn.innerText = 'Recording';
-            console.log('Recording started');
-        } catch (err) {
-            console.error('Error starting recording:', err);
-        }
-    }
-
-    // Function to stop recording
-    function stopRecording(): void {
-        console.log('Stopping recording, recorder available:', !!mediaRecorder);
-        if (!mediaRecorder) {
-            console.error('No media source selected');
-            return;
-        }
-
-        try {
-            mediaRecorder.stop();
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            startBtn.classList.remove('is-danger');
-            startBtn.innerText = 'Start';
-            console.log('Recording stopped');
-        } catch (err) {
-            console.error('Error stopping recording:', err);
-        }
-    }
-
-    // Change videoSource window to record
-    async function selectSource(source: DesktopCapturerSource): Promise<void> {
-        console.log('Source selected:', source.name);
-        videoSelectBtn.innerText = source.name;
-
-        try {
-            const constraints: MediaStreamConstraints = {
-                audio: false,
-                video: {
-                    // @ts-ignore: Electron-specific properties
-                    mandatory: {
-                        chromeMediaSource: 'desktop',
-                        chromeMediaSourceId: source.id
-                    }
-                } as MediaTrackConstraints
-            };
-
-            console.log('Getting user media with constraints');
-            // Create a Stream
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            console.log('Stream obtained:', !!stream);
-
-            // Preview source in a video element
-            videoElement.srcObject = stream;
-            videoElement.play();
-
-            // Create Media Recorder
-            const options = { mimeType: 'video/webm; codecs=vp9' };
-            mediaRecorder = new MediaRecorder(stream, options);
-            console.log('Media recorder created');
-
-            // Register Event Handlers
-            mediaRecorder.ondataavailable = handleDataAvailable;
-            mediaRecorder.onstop = handleStop;
-
-            // Enable start button
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-        } catch (err) {
-            console.error('Error selecting source:', err);
-        }
-    }
-
-    // Captures all recorded chunks
-    function handleDataAvailable(e: BlobEvent): void {
-        console.log('Video data available, size:', e.data.size);
-        if (e.data.size > 0) {
-            recordedChunks.push(e.data);
-        }
-    }
-
-    // Save video file on stop
-    async function handleStop(e: Event): Promise<void> {
-        console.log('Handle stop called, chunks:', recordedChunks.length);
-        if (recordedChunks.length === 0) {
-            console.error('No recorded data available');
-            return;
-        }
-
-        try {
-            const blob = new Blob(recordedChunks, {
-                type: 'video/webm; codecs=vp9'
-            });
-
-            console.log('Creating buffer from blob');
-            const buffer = Buffer.from(await blob.arrayBuffer());
-
-            console.log('Showing save dialog');
-            const { filePath, canceled } = await dialog.showSaveDialog({
-                buttonLabel: 'Save video',
-                defaultPath: `vid-${Date.now()}.webm`,
-                filters: [{
-                    name: 'WebM files',
-                    extensions: ['webm']
-                }]
-            });
-
-            if (canceled || !filePath) {
-                console.log('Save canceled');
-                return;
-            }
-
-            console.log('Saving to:', filePath);
-
-            writeFile(filePath, buffer, (err: any) => {
-                if (err) {
-                    console.error('Failed to save video:', err);
-                } else {
-                    console.log('Video saved successfully!');
-                    recordedChunks.length = 0; // Clear the chunks after successful save
-                }
-            });
-        } catch (err) {
-            console.error('Error in handleStop:', err);
-        }
-    }
+    initScanner();
 });
+
+function initScanner() {
+    // Device scanning elements
+    const scanBtn = document.getElementById('scanBtn') as HTMLButtonElement;
+    const deviceList = document.getElementById('deviceList') as HTMLTableSectionElement;
+    const scannerAlerts = document.getElementById('scannerAlerts') as HTMLDivElement;
+    const alertMessage = document.getElementById('alertMessage') as HTMLParagraphElement;
+    const deleteAlertBtn = scannerAlerts.querySelector('.delete') as HTMLButtonElement;
+    const configModal = document.getElementById('configModal') as HTMLDivElement;
+    const configUuid = document.getElementById('configUuid') as HTMLInputElement;
+    const configIp = document.getElementById('configIp') as HTMLInputElement;
+    const configNetmask = document.getElementById('configNetmask') as HTMLInputElement;
+    const configInterface = document.getElementById('configInterface') as HTMLInputElement;
+    const configSaveBtn = document.getElementById('configSaveBtn') as HTMLButtonElement;
+    const cancelConfigBtns = document.querySelectorAll('.cancel-config, .modal-background, .delete');
+    
+    // Store discovered devices
+    const discoveredDevices = new Map();
+    let isScanning = false;
+    
+    // Set up event handlers
+    scanBtn.addEventListener('click', toggleScanning);
+    deleteAlertBtn.addEventListener('click', () => {
+        scannerAlerts.style.display = 'none';
+    });
+    
+    cancelConfigBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            configModal.classList.remove('is-active');
+        });
+    });
+    
+    configSaveBtn.addEventListener('click', configureDevice);
+    
+    // IPC event listeners for scanner events
+    ipcRenderer.on('hbk-device-found', (_event: any, device: HbkDevice) => {
+        console.log('Renderer: Device found:', device);
+        addOrUpdateDevice(device);
+        showAlert(`Device found: ${device.params.device.name}`, 'success');
+    });
+    
+    ipcRenderer.on('hbk-scanner-error', (_event: any, error: string) => {
+        console.error('Renderer: Scanner error:', error);
+        showAlert(`Scanner error: ${error}`, 'error');
+    });
+    
+    // Toggle scanning on/off
+    async function toggleScanning() {
+        if (isScanning) {
+            try {
+                await ipcRenderer.invoke('stop-scanning');
+                scanBtn.classList.remove('is-danger');
+                scanBtn.classList.add('is-primary');
+                scanBtn.textContent = 'Start Scanning';
+                isScanning = false;
+                showAlert('Scanner stopped', 'info');
+            } catch (err) {
+                console.error('Failed to stop scanning:', err);
+                showAlert('Failed to stop scanning', 'error');
+            }
+        } else {
+            try {
+                await ipcRenderer.invoke('start-scanning');
+                scanBtn.classList.remove('is-primary');
+                scanBtn.classList.add('is-danger');
+                scanBtn.textContent = 'Stop Scanning';
+                isScanning = true;
+                showAlert('Scanner started, looking for devices...', 'info');
+            } catch (err) {
+                console.error('Failed to start scanning:', err);
+                showAlert('Failed to start scanning', 'error');
+            }
+        }
+    }
+    
+    // Add or update device in the table
+    function addOrUpdateDevice(device: HbkDevice) {
+        const uuid = device.params.device.uuid;
+        
+        // Store device in map
+        discoveredDevices.set(uuid, device);
+        
+        // Remove "no devices" row if it exists
+        const noDevicesRow = document.getElementById('no-devices');
+        if (noDevicesRow) {
+            noDevicesRow.remove();
+        }
+        
+        // Check if device is already in table
+        let deviceRow = document.getElementById(`device-${uuid}`);
+        
+        if (!deviceRow) {
+            // Create new row
+            deviceRow = document.createElement('tr');
+            deviceRow.id = `device-${uuid}`;
+            deviceRow.className = 'device-row';
+            deviceList.appendChild(deviceRow);
+            
+            // Add click event to show details
+            deviceRow.addEventListener('click', () => {
+                showDeviceDetails(uuid);
+            });
+        }
+        
+        // Get the first IPv4 address
+        const ipAddress = device.params.netSettings.interface.ipv4[0]?.address || 'N/A';
+        
+        // Update row content
+        deviceRow.innerHTML = `
+            <td>
+                <span class="status-indicator online"></span>
+                ${device.params.device.name}
+            </td>
+            <td>${device.params.device.type}</td>
+            <td>${uuid}</td>
+            <td>${ipAddress}</td>
+            <td>
+                <button class="button is-small is-info configure-btn" data-uuid="${uuid}">Configure</button>
+            </td>
+        `;
+        
+        // Add event listener to the configure button
+        const configureBtn = deviceRow.querySelector('.configure-btn') as HTMLButtonElement;
+        configureBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent row click
+            openConfigModal(uuid);
+        });
+    }
+    
+    // Open configuration modal
+    function openConfigModal(uuid: string) {
+        const device = discoveredDevices.get(uuid);
+        if (!device) {
+            showAlert(`Device ${uuid} not found`, 'error');
+            return;
+        }
+        
+        // Populate modal fields
+        configUuid.value = uuid;
+        
+        // Get first IPv4 address and netmask
+        const ipv4 = device.params.netSettings.interface.ipv4[0];
+        if (ipv4) {
+            configIp.value = ipv4.address;
+            configNetmask.value = ipv4.netmask;
+        }
+        
+        // Set interface name
+        configInterface.value = device.params.netSettings.interface.name;
+        
+        // Show modal
+        configModal.classList.add('is-active');
+    }
+    
+    // Configure device
+    async function configureDevice() {
+        const uuid = configUuid.value;
+        const ip = configIp.value;
+        const netmask = configNetmask.value;
+        const interfaceName = configInterface.value;
+        
+        if (!uuid || !ip || !netmask) {
+            showAlert('Please fill all required fields', 'error');
+            return;
+        }
+        
+        const configMessage = {
+            device: {
+                uuid: uuid
+            },
+            netSettings: {
+                interface: {
+                    name: interfaceName,
+                    ipv4: {
+                        manualAddress: ip,
+                        manualNetmask: netmask
+                    },
+                    configurationMethod: 'manual'
+                }
+            },
+            ttl: 120
+        };
+        
+        try {
+            await ipcRenderer.invoke('configure-device', configMessage);
+            showAlert(`Configuration sent to device ${uuid}`, 'success');
+            configModal.classList.remove('is-active');
+        } catch (err) {
+            console.error('Failed to configure device:', err);
+            showAlert('Failed to configure device', 'error');
+        }
+    }
+    
+    // Show device details (could expand in the future)
+    function showDeviceDetails(uuid: string) {
+        const device = discoveredDevices.get(uuid);
+        console.log('Device details:', device);
+        // Future: Add a detailed view of device properties
+    }
+    
+    // Show alert message
+    function showAlert(message: string, type: 'success' | 'error' | 'info') {
+        alertMessage.textContent = message;
+        scannerAlerts.style.display = 'block';
+        
+        // Remove all type classes
+        scannerAlerts.classList.remove('is-success', 'is-danger', 'is-info');
+        
+        // Add the appropriate class
+        switch (type) {
+            case 'success':
+                scannerAlerts.classList.add('is-success');
+                break;
+            case 'error':
+                scannerAlerts.classList.add('is-danger');
+                break;
+            case 'info':
+                scannerAlerts.classList.add('is-info');
+                break;
+        }
+        
+        // Auto hide after 5 seconds for success messages
+        if (type === 'success') {
+            setTimeout(() => {
+                scannerAlerts.style.display = 'none';
+            }, 5000);
+        }
+    }
+}
