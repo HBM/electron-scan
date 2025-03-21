@@ -103,7 +103,6 @@ function initScanner() {
     ipcRenderer.on('hbk-device-found', (_event: any, device: HbkDevice) => {
         console.log('Renderer: Device found:', device);
         addOrUpdateDevice(device);
-        showAlert(`Device found: ${device.params.device.name}`, 'success');
     });
     
     ipcRenderer.on('hbk-scanner-error', (_event: any, error: string) => {
@@ -142,6 +141,8 @@ function initScanner() {
     
     function addOrUpdateDevice(device: HbkDevice) {
         const uuid = device.params.device.uuid;
+
+        const isNewDevice = !discoveredDevices.has(uuid);
         
         // Gerät speichern
         discoveredDevices.set(uuid, device);
@@ -163,6 +164,10 @@ function initScanner() {
             deviceRow.addEventListener('click', () => {
                 showDeviceDetails(uuid);
             });
+
+            if (isNewDevice) {
+                showAlert(`New device found: ${device.params.device.name}`, 'success');
+            }
         }
         
         // IPv4 addresse
