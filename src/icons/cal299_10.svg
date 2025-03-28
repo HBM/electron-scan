@@ -1,0 +1,30 @@
+<svg viewBox="0 0 28 173">
+    <g transform="translate(-70, -55)">
+        <rect width="27" height="173" x="70" y="55"
+            style="fill: rgb(201, 201, 201); fill-opacity: 1; stroke-width: 0.273039; stroke-linecap: round; stroke-linejoin: round;">
+        </rect>
+        <path d="M 69.999999,55 72,65 V 228 H 95 V 65 L 96.999998,55 H 69.999999"
+            style="fill: rgb(25, 53, 76); fill-opacity: 1; stroke: none; stroke-width: 0.264583px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;">
+        </path>
+        <path d="M 71.999998,64.999999 H 94.999999"
+            style="fill: none; stroke: rgb(0, 0, 0); stroke-width: 1; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1;">
+        </path>
+        <path d="m 72.999999,55 2.999999,8 h 15.000001 l 3,-8"
+            style="fill: none; stroke: rgb(0, 0, 0); stroke-width: 0.5; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1;">
+        </path>
+        <circle cy="59.5" cx="83.5" r="4.5"
+            style="fill: rgb(202, 202, 202); fill-opacity: 1; stroke: none; stroke-width: 0.499999; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1;">
+        </circle>
+        <path d="m 72.999999,227 10e-7,-8 21,7 -10e-7,1 h -21"
+            style="fill: rgb(223, 234, 244); fill-opacity: 1; stroke: none; stroke-width: 0.264583px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;">
+        </path>
+        <path d="M 84.086261,222.69692 73,227 h 20.999999 v -1"
+            style="fill: rgb(151, 219, 181); fill-opacity: 1; stroke: none; stroke-width: 0.265; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1;">
+        </path>
+        <rect width="21" height="161" x="73" y="66"
+            style="fill: none; fill-opacity: 1; stroke: rgb(0, 0, 0); stroke-width: 0.25; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1;">
+        </rect>
+    </g>
+    <g transform="translate(16, -15) rotate(280)"><text x="0" y="0" dominant-baseline="middle" text-anchor="begin"
+            style="font-size: 7.5pt; fill: rgb(51, 51, 51);">100001</text></g>
+</svg>

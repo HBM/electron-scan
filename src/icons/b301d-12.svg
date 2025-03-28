@@ -1,0 +1,145 @@
+<svg viewBox="0 0 28 173">
+    <g transform="translate(-70, -55)" class="Card_card__HTXp0">
+        <rect width="27" height="173" x="70" y="55" style="fill: rgb(201, 201, 201); stroke-width: 0.273039;"></rect>
+        <path d="M 69.999999,55 72,65 V 228 H 95 V 65 L 96.999998,55 H 69.999999"
+            style="fill: rgb(25, 53, 76); stroke: none; stroke-width: 0.264583px;"></path>
+        <ellipse cy="79" cx="79" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse>
+        <path d="M 71.999998,64.999999 H 94.999999" style="fill: none; stroke: rgb(0, 0, 0); stroke-width: 1;"></path>
+        <path d="m 72.999999,55 2.999999,8 h 15.000001 l 3,-8"
+            style="fill: none; stroke: rgb(0, 0, 0); stroke-width: 0.5;"></path>
+        <circle cy="59.5" cx="83.5" r="4.5" style="fill: rgb(202, 202, 202); stroke: none; stroke-width: 0.499999;">
+        </circle>
+        <path d="m 72.999999,227 10e-7,-8 21,7 -10e-7,1 h -21"
+            style="fill: rgb(223, 234, 244); stroke: none; stroke-width: 0.264583px;"></path>
+        <path d="M 84.086261,222.69692 73,227 h 20.999999 v -1"
+            style="fill: rgb(151, 219, 181); stroke: none; stroke-width: 0.265;"></path>
+        <rect width="21" height="161" x="73" y="66" style="fill: none; stroke: rgb(0, 0, 0); stroke-width: 0.25;">
+        </rect><text xml:space="preserve" x="80" y="75"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="80" y="75"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                1</tspan>
+        </text><text xml:space="preserve" x="90" y="75"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="75"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                7</tspan>
+        </text>
+        <circle cx="79" cy="79" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="79" cy="79" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+        <ellipse cy="79" cx="88" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse>
+        <circle cx="88" cy="79" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="88" cy="79" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+        <ellipse cy="99" cx="79" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse><text xml:space="preserve"
+            x="80" y="95"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="80" y="95"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                2</tspan>
+        </text><text xml:space="preserve" x="90" y="95"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="95"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                8</tspan>
+        </text>
+        <circle cx="79" cy="99" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="79" cy="99" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+        <ellipse cy="99" cx="88" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse>
+        <circle cx="88" cy="99" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="88" cy="99" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+        <ellipse cy="119" cx="79" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse><text xml:space="preserve"
+            x="80" y="115"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="80" y="115"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                3</tspan>
+        </text><text xml:space="preserve" x="90" y="115"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="115"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                9</tspan>
+        </text>
+        <circle cx="79" cy="119" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="79" cy="119" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+        <ellipse cy="119" cx="88" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse>
+        <circle cx="88" cy="119" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="88" cy="119" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+        <ellipse cy="139" cx="79" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse><text xml:space="preserve"
+            x="80" y="135"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="80" y="135"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                4</tspan>
+        </text><text xml:space="preserve" x="89" y="135"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="89" y="135"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                10</tspan>
+        </text>
+        <circle cx="79" cy="139" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="79" cy="139" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+        <ellipse cy="139" cx="88" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse>
+        <circle cx="88" cy="139" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="88" cy="139" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+        <ellipse cy="159" cx="79" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse><text xml:space="preserve"
+            x="80" y="155"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="80" y="155"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                5</tspan>
+        </text><text xml:space="preserve" x="89" y="155"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="89" y="155"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                11</tspan>
+        </text>
+        <circle cx="79" cy="159" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="79" cy="159" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+        <ellipse cy="159" cx="88" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse>
+        <circle cx="88" cy="159" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="88" cy="159" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+        <ellipse cy="179" cx="79" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse><text xml:space="preserve"
+            x="80" y="175"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="80" y="175"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                6</tspan>
+        </text><text xml:space="preserve" x="89" y="175"
+            style="font-style: normal; font-variant: normal; font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="89" y="175"
+                style="font-style: normal; font-variant: normal; font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+                12</tspan>
+        </text>
+        <circle cx="79" cy="179" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="79" cy="179" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+        <ellipse cy="179" cx="88" rx="1.9999982" ry="1.999998"
+            style="fill: rgb(159, 128, 0); stroke: none; stroke-width: 0.264999;"></ellipse>
+        <circle cx="88" cy="179" r="1" style="fill: rgb(255, 214, 49); stroke: none; stroke-width: 0.264999;"></circle>
+        <ellipse cx="88" cy="179" rx="3.0000019" ry="2.9999981"
+            style="fill: none; stroke: rgb(158, 140, 0); stroke-width: 1; stroke-opacity: 0.474926;"></ellipse>
+    </g>
+    <g transform="translate(16, -15) rotate(280)"><text x="0" y="0" dominant-baseline="middle" text-anchor="begin"
+            style="font-size: 7.5pt; fill: rgb(51, 51, 51);">010001</text></g>
+</svg>

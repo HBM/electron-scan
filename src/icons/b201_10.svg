@@ -1,0 +1,105 @@
+<svg viewBox="0 0 28 173">
+    <g transform="translate(-70, -55)" class="Card_card__z6vlj">
+        <rect width="27" height="173" x="70" y="55" style="fill: rgb(201, 201, 201); stroke-width: 0.273039;"></rect>
+        <path d="M 69.999999,55 72,65 V 228 H 95 V 65 L 96.999998,55 H 69.999999"
+            style="fill: rgb(25, 53, 76); stroke: none; stroke-width: 0.264583px;"></path>
+        <path d="M 71.999998,64.999999 H 94.999999" style="fill: none; stroke: rgb(0, 0, 0); stroke-width: 1;"></path>
+        <path d="m 72.999999,55 2.999999,8 h 15.000001 l 3,-8"
+            style="fill: none; stroke: rgb(0, 0, 0); stroke-width: 0.5;"></path>
+        <circle cy="59.5" cx="83.5" r="4.5" style="fill: rgb(202, 202, 202); stroke: none; stroke-width: 0.499999;">
+        </circle>
+        <path d="m 72.999999,227 10e-7,-8 21,7 -10e-7,1 h -21"
+            style="fill: rgb(223, 234, 244); stroke: none; stroke-width: 0.264583px;"></path>
+        <path d="M 84.086261,222.69692 73,227 h 20.999999 v -1"
+            style="fill: rgb(151, 219, 181); stroke: none; stroke-width: 0.265;"></path>
+        <rect width="21" height="161" x="73" y="66" style="fill: none; stroke: rgb(0, 0, 0); stroke-width: 0.25;">
+        </rect>
+        <rect width="11" height="113" x="78" y="72"
+            style="fill: rgb(202, 202, 202); stroke: rgb(0, 0, 0); stroke-width: 0.25;"></rect>
+        <path d="m 79,73 v 13 h 9 V 73 Z" style="fill: rgb(0, 0, 0); stroke: none; stroke-width: 0.287632px;"></path>
+        <path d="m 79,87 v 13 h 9 V 87 Z" style="fill: rgb(0, 0, 0); stroke: none; stroke-width: 0.287632px;"></path>
+        <path d="m 79,101 v 13 h 9 v -13 z" style="fill: rgb(0, 0, 0); stroke: none; stroke-width: 0.287632px;"></path>
+        <path d="m 79,115 v 13 h 9 v -13 z" style="fill: rgb(0, 0, 0); stroke: none; stroke-width: 0.287632px;"></path>
+        <path d="m 79,129 v 13 h 9 v -13 z" style="fill: rgb(0, 0, 0); stroke: none; stroke-width: 0.287632px;"></path>
+        <path d="m 79,143 v 13 h 9 v -13 z" style="fill: rgb(0, 0, 0); stroke: none; stroke-width: 0.287632px;"></path>
+        <path d="m 79,157 v 13 h 9 v -13 z" style="fill: rgb(0, 0, 0); stroke: none; stroke-width: 0.287632px;"></path>
+        <path d="m 79,171 v 13 h 9 v -13 z" style="fill: rgb(0, 0, 0); stroke: none; stroke-width: 0.264583px;"></path>
+        <rect width="11" height="29" x="78" y="193"
+            style="fill: rgb(202, 202, 202); stroke: rgb(0, 0, 0); stroke-width: 0.25;"></rect>
+        <path d="m 79,194 v 13 h 9 v -13 z" style="fill: rgb(0, 0, 0); stroke: none; stroke-width: 0.287632px;"></path>
+        <path d="m 79,208 v 13 h 9 v -13 z" style="fill: rgb(0, 0, 0); stroke: none; stroke-width: 0.287632px;"></path>
+        <text x="90" y="81"
+            style="font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="81"
+                style="font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">1
+            </tspan>
+        </text><text x="90" y="95"
+            style="font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="95"
+                style="font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">2
+            </tspan>
+        </text><text x="90" y="109"
+            style="font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="109"
+                style="font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">3
+            </tspan>
+        </text><text x="90" y="123"
+            style="font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="123"
+                style="font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">4
+            </tspan>
+        </text><text x="90" y="137"
+            style="font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="137"
+                style="font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">5
+            </tspan>
+        </text><text x="90" y="151"
+            style="font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="151"
+                style="font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">6
+            </tspan>
+        </text><text x="90" y="165"
+            style="font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="165"
+                style="font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">7
+            </tspan>
+        </text><text x="90" y="179"
+            style="font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="179"
+                style="font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">8
+            </tspan>
+        </text><text x="90" y="202"
+            style="font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="90" y="202"
+                style="font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">9
+            </tspan>
+        </text><text x="89" y="216"
+            style="font-size: 3.52778px; line-height: 1.25; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">
+            <tspan x="89" y="216"
+                style="font-size: 3.52778px; font-family: Arial; fill: rgb(255, 255, 255); stroke-width: 0.264583;">10
+            </tspan>
+        </text>
+        <rect width="1" height="5" x="75" y="77" style="fill: rgb(45, 20, 53); stroke: none; stroke-width: 0.296278;">
+        </rect>
+        <rect width="1" height="5" x="75" y="91" style="fill: rgb(45, 20, 53); stroke: none; stroke-width: 0.296278;">
+        </rect>
+        <rect width="1" height="5" x="75" y="105" style="fill: rgb(45, 20, 53); stroke: none; stroke-width: 0.296278;">
+        </rect>
+        <rect width="1" height="5" x="75" y="119" style="fill: rgb(45, 20, 53); stroke: none; stroke-width: 0.296278;">
+        </rect>
+        <rect width="1" height="5" x="75" y="133" style="fill: rgb(45, 20, 53); stroke: none; stroke-width: 0.296278;">
+        </rect>
+        <rect width="1" height="5" x="75" y="147" style="fill: rgb(45, 20, 53); stroke: none; stroke-width: 0.296278;">
+        </rect>
+        <rect width="1" height="5" x="75" y="161" style="fill: rgb(45, 20, 53); stroke: none; stroke-width: 0.296278;">
+        </rect>
+        <rect width="1" height="5" x="75" y="175" style="fill: rgb(45, 20, 53); stroke: none; stroke-width: 0.296278;">
+        </rect>
+        <rect width="1" height="5" x="75" y="198" style="fill: rgb(45, 20, 53); stroke: none; stroke-width: 0.296278;">
+        </rect>
+        <rect width="1" height="5" x="75" y="212" style="fill: rgb(45, 20, 53); stroke: none; stroke-width: 0.296278;">
+        </rect>
+    </g>
+    <g transform="translate(16, -15) rotate(280)"><text x="0" y="0" dominant-baseline="middle" text-anchor="begin"
+            style="font-size: 7.5pt; fill: rgb(51, 51, 51);">100054</text></g>
+</svg>
