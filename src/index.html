@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>HBK Device Discovery</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="index.css" />
     <script defer src="render.js"></script>
   </head>
@@ -47,7 +48,7 @@
               <th>Type</th>
               <th>UUID</th>
               <th>IP Address</th>
-              <th>Actions</th>
+              <th> </th>
             </tr>
           </thead>
           <tbody id="deviceList">
@@ -88,77 +89,6 @@
       </div>
     </div>
 
-      <!-- Gerät Details Modal -->
-      <div id="deviceDetailsModal" class="modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Device Details</p>
-            <button class="delete" aria-label="close"></button>
-          </header>
-          <section class="modal-card-body">
-            <!-- Info -->
-            <div class="block">
-              <h4 class="title is-5">Basic Information</h4>
-              <table class="table is-striped is-fullwidth">
-                <tr><th>Name</th><td id="detail-name"></td></tr>
-                <tr><th>UUID</th><td id="detail-uuid"></td></tr>
-                <tr><th>Type</th><td id="detail-type"></td></tr>
-                <tr><th>Family</th><td id="detail-family"></td></tr>
-                <tr><th>Firmware</th><td id="detail-firmware"></td></tr>
-                <tr><th>API Version</th><td id="detail-api"></td></tr>
-                <tr><th>Expiration</th><td id="detail-expiration"></td></tr>
-              </table>
-            </div>
-
-            <!-- Network Settings -->
-            <div class="block">
-              <h4 class="title is-5">Network Settings</h4>
-              <table class="table is-striped is-fullwidth">
-                <tr><th>Interface</th><td id="detail-interface-name"></td></tr>
-                <tr><th>Description</th><td id="detail-interface-desc"></td></tr>
-                <tr><th>Type</th><td id="detail-interface-type"></td></tr>
-                <tr><th>Configuration</th><td id="detail-interface-config"></td></tr>
-              </table>
-            </div>
-
-            <!-- IPv4 Addresses -->
-            <div class="block">
-              <h5 class="title is-6">IPv4 Addresses</h5>
-              <table class="table is-striped is-fullwidth">
-                <thead>
-                  <tr><th>#</th><th>Address</th><th>Netmask</th></tr>
-                </thead>
-                <tbody id="detail-ipv4-list"></tbody>
-              </table>
-            </div>
-
-            <!-- IPv6 Addresses -->
-            <div class="block">
-              <h5 class="title is-6">IPv6 Addresses</h5>
-              <table class="table is-striped is-fullwidth">
-                <thead>
-                  <tr><th>#</th><th>Address</th><th>Prefix</th></tr>
-                </thead>
-                <tbody id="detail-ipv6-list"></tbody>
-              </table>
-            </div>
-
-            <!-- Services -->
-            <div class="block">
-              <h5 class="title is-6">Services</h5>
-              <table class="table is-striped is-fullwidth">
-                <thead>
-                  <tr><th>#</th><th>Type</th><th>Port</th></tr>
-                </thead>
-                <tbody id="detail-services-list"></tbody>
-              </table>
-            </div>
-          </section>
-          <footer class="modal-card-foot">
-            <button class="button close-details">Close</button>
-          </footer>
-      </div>
     </div>
   </body>
 </html>

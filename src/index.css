@@ -6,14 +6,15 @@ body {
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
+  overflow-y: auto;
 }
 
 .app-bar {
   background-color: #09245a;
   color: white;
-  padding: 0.75rem 1.5rem;
+  padding: 1.25rem 1.5rem;
   width: 100%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: sticky;
   top: 0;
   z-index: 30;
@@ -22,84 +23,129 @@ body {
 .app-bar-content {
   display: flex;
   align-items: center;
+  max-width: 1600px;
+  margin: 0 0;
+  width: 100%;
+  justify-content: flex-start;
 }
 
 .app-logo {
   display: flex;
   align-items: center;
-  margin-right: 1rem;
+  margin-right: 1.5rem;
 }
 
 .app-logo img {
-  height: 40px;
-  width: 40px;
+  height: 50px;
+  width: 50px;
   border-radius: 50%;
   object-fit: cover;
   background-color: white;
-  padding: 3px;
+  padding: 4px;
 }
 
 .app-title {
-  flex: 1;
+  flex: 1 0 auto;
+  text-align: left;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.app-title h1.title {
+  font-size: 2.2rem !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+  margin-left: 0 !important;
 }
 
 .filters-container {
   width: 100%;
   background-color: white;
-  padding: 1rem 1.5rem;
+  padding: 1.25rem 1.5rem;
   margin-bottom: 1rem;
   box-shadow: 0 4px 6px rgba(10, 10, 10, 0.15);
-  min-height: 60px;
+  min-height: 70px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
 }
 
 .filters-container #scanBtn {
-  margin-right: 1rem;
+  margin-right: 1.25rem;
+  font-size: 1.2rem;
+  padding: 0.6em 1.2em;
 }
 
 .filters-container #scannerAlerts {
-  width: auto; /* Allow natural sizing based on content */
-  max-width: none; /* Remove the max-width constraint */
+  width: auto;
+  max-width: none;
   margin-top: 0;
   margin-bottom: 0;
-  display: inline-flex; /* Better alignment with button */
+  display: inline-flex;
   align-items: center;
-  height: 2.5rem; /* Match button's standard height */
-  padding: 0.5rem 1rem;
+  height: 3rem;
+  padding: 0.75rem 1.25rem;
 }
 
 .filters-container #scannerAlerts p {
-  margin: 0; /* Remove default paragraph margin */
-  padding-right: 0.5rem;
+  margin: 0;
+  padding-right: 0.75rem;
+  font-size: 1.1rem;
 }
 
 .filters-container #scannerAlerts .delete {
   margin-left: auto;
+  height: 1.25rem;
+  width: 1.25rem;
 }
 
 .device-section {
   width: 100%;
   background-color: white;
-  padding: 1.5rem;
+  padding: 1.25rem 1.5rem;
   margin: 0;
   flex: 1;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
+  overflow: visible;
+}
+
+.device-list-header h2.subtitle {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
 }
 
 .device-list-header {
-  max-width: 1400px;
-  margin: 0 auto 1rem auto;
+  max-width: none;
+  margin: 0 0 1.5rem 0;
   width: 100%;
 }
 
 .table-container {
   overflow-x: auto;
-  max-height: calc(100vh - 250px);
-  max-width: 1400px;
-  margin: 0 auto;
+  overflow-y: visible;
+  max-height: none;
+  max-width: none;
+  margin: 0;
   width: 100%;
+}
+
+.table {
+  font-size: 1.4rem;
+  border-spacing: 0 0.5rem;
+  border-collapse: separate;
+}
+
+.table th, 
+.table td {
+  padding: 1.25rem 1.5rem;
+  vertical-align: middle;
+}
+
+.table thead th {
+  font-size: 1.5rem;
+  padding-bottom: 1.55rem;
+  font-weight: 600;
 }
 
 .notification {
@@ -108,36 +154,146 @@ body {
 
 .status-indicator {
   display: inline-block;
-  width: 10px;
-  height: 10px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  margin-right: 5px;
+  margin-right: 15px;
 }
 
 .status-indicator.online {
   background-color: #48c774;
+  box-shadow: 0 0 5px rgba(72, 199, 116, 0.5);
 }
 
 .status-indicator.offline {
   background-color: #f14668;
+  box-shadow: 0 0 5px rgba(241, 70, 104, 0.5);
+}
+
+.configure-btn,
+button.configure-btn,
+.button.is-small.is-info.configure-btn {
+  background-color: #103277 !important;
+  border-color: #103277 !important;
+  color: white !important;
+  font-size: 1.2rem !important;
+  padding: 0.7em 1.4em !important;
+  height: auto !important;
+  margin-right: 1rem !important;
+  transition: background-color 0.3s ease !important;
+  opacity: 1 !important;
+}
+
+.configure-btn:hover,
+button.configure-btn:hover,
+.button.is-small.is-info.configure-btn:hover {
+  background-color: #09245a !important;
+  border-color: #09245a !important;
+  box-shadow: 0 2px 5px rgba(9, 36, 90, 0.3) !important;
 }
 
 .device-row {
   cursor: pointer;
+  transition: background-color 0.2s ease;
+  height: 5rem;
 }
 
 .device-row:hover {
   background-color: #f5f5f5;
 }
 
+.device-row.expanded {
+  background-color: #eef6fc;
+  border-bottom: 3px solid #3273dc;
+}
+
+.device-details-row {
+  background-color: #f9fbfd;
+  transition: all 0.3s ease;
+  border-left: 6px solid #3273dc;
+  display: table-row;
+}
+
+.device-details-container {
+  padding: 2rem;
+}
+
+.detail-card {
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
+  margin-bottom: 2rem;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+}
+
+.detail-card .title {
+  padding: 1.25rem 1.75rem;
+  font-size: 1.4rem !important;
+  margin-bottom: 0 !important;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fafafa;
+  color: #09245a !important;
+}
+
+.detail-card .icon-text .icon {
+  color: #09245a !important;
+}
+
+.detail-section {
+  padding: 1rem;
+}
+
+.detail-section .table {
+  margin-bottom: 0;
+  font-size: 1.2rem;
+}
+
+.detail-section .table th {
+  background-color: #fafafa;
+  font-weight: 600;
+  color: #363636;
+  font-size: 1.1rem;
+}
+
+.ipv6-address {
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+.toggle-details {
+  cursor: pointer;
+  margin-left: 1.25rem;
+  font-size: 1.6rem;
+}
+
+.device-details-container .table {
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.device-details-container th,
+.device-details-container td {
+  padding: 0.8rem 1.2rem;
+}
+
+.has-text-link.has-text-weight-medium {
+  color: inherit !important;
+  font-weight: normal !important;
+}
+
 @media screen and (max-width: 768px) {
   .app-bar {
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.25rem;
   }
   
   .app-logo img {
-    height: 30px;
-    width: 30px;
+    height: 40px;
+    width: 40px;
+  }
+  
+  .app-title h1.title {
+    font-size: 1.4rem !important;
   }
 
   .filters-container {
@@ -149,6 +305,7 @@ body {
   .filters-container #scanBtn {
     margin-bottom: 0.75rem;
     margin-right: 0;
+    font-size: 1.1rem;
   }
   
   .filters-container #scannerAlerts {
@@ -157,15 +314,23 @@ body {
     margin-top: 0.5rem;
   }
   
+  .device-section {
+    padding: 1.5rem;
+  }
+  
   .table-container {
     max-height: calc(100vh - 250px);
   }
   
-  .button.is-medium {
-    font-size: 0.9rem;
+  .table {
+    font-size: 1.1rem;
   }
-
-  .devices-section {
-    padding: 1rem;
+  
+  .device-list-header h2.subtitle {
+    font-size: 1.8rem;
+  }
+  
+  .device-details-container {
+    padding: 1.25rem;
   }
 }
