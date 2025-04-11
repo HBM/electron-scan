@@ -56,6 +56,11 @@ module.exports = {
         path.resolve(__dirname, 'src/index.css'), 
         path.resolve(__dirname, 'dist/index.css')
       );
+
+      await fs.copy(
+        path.resolve(__dirname, 'src/assets'), 
+        path.resolve(__dirname, 'dist/assets')
+      );
     }
   }
 };
