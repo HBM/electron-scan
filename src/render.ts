@@ -357,6 +357,26 @@ function initScanner() {
             return 'assets/default-device.webp';
         }
     }
+
+    function getDeviceWebsite(device: HbkDevice): string {
+        // MIT ECHTEN WEBSITE URL IMPLEMENTIEREN
+        const deviceType = device.params.device.type.toLowerCase();
+        // Mock
+        const ipAddress = device.params.netSettings.interface.ipv4[0]?.address || '0.0.0.0';
+        
+        // Mock
+        return `http://${ipAddress}`;
+        
+        // Echte implementierung
+        // return deviceWebsiteMap[deviceType] || `http://${ipAddress}`;
+        /*
+            const websiteMap: Record<string, string> = {
+            'mx410': 'http://example.com/mx410',
+            'mx460': 'http://example.com/mx460',
+            // Add more mappings as needed
+        };*/
+        // EVENT LISTENR IMPLEMENTIEREN (IN POPULATEDEVICE)
+    }
     
     // Geräte Details werden gezeigt wenn Gerät geclickt wird
     function toggleDeviceDetails(uuid: string) {
@@ -400,6 +420,7 @@ function initScanner() {
     // Geräte Details mit Elemente erstellt
     function populateDeviceDetails(device: HbkDevice, container: Element) {
         const imagePath = getDeviceImage(device);
+        const websiteUrl = getDeviceWebsite(device);
 
         container.innerHTML = `
         <div class="device-details-container">
@@ -408,6 +429,16 @@ function initScanner() {
                 <div class="column is-full has-text-centered mb-4">
                     <img src="${imagePath}" alt="${device.params.device.name}" class="device-image"
                         onerror="this.onerror=null; this.src='assets/default-device.webp';">
+                    
+                    <!-- Website Link -->
+                    <div class="mt-3">
+                        <a href="#" class="button is-link website-link" data-url="${websiteUrl}">
+                            <span class="icon">
+                                <i class="fas fa-external-link-alt"></i>
+                            </span>
+                            <span>Open Device Website</span>
+                        </a>
+                    </div>
                 </div>
                 <!-- Info -->
                 <div class="column is-half">

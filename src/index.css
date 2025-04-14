@@ -79,7 +79,7 @@ body {
 .filters-container #scannerAlerts {
   width: auto;
   max-width: none;
-  margin-top: 0;
+  margin-top: 0 !important;
   margin-bottom: 0;
   display: inline-flex;
   align-items: center;
@@ -317,6 +317,25 @@ button.configure-btn:hover,
 
 .mb-4 {
   margin-bottom: 1.5rem !important;
+}
+
+.website-link {
+  background-color: #09245a !important;
+  border-color: #09245a !important;
+  color: white !important;
+  padding: 0.5em 1.25em !important;
+  transition: background-color 0.3s ease !important;
+  margin-top: 1rem !important;
+  font-size: 1rem !important;
+}
+
+.website-link:hover {
+  background-color: #103277 !important;
+  box-shadow: 0 2px 5px rgba(9, 36, 90, 0.3) !important;
+}
+
+.mt-3 {
+  margin-top: 1rem !important;
 }
 
 @media screen and (max-width: 768px) {
