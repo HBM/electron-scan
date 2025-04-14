@@ -192,6 +192,23 @@ button.configure-btn:hover,
   box-shadow: 0 2px 5px rgba(9, 36, 90, 0.3) !important;
 }
 
+#configSaveBtn,
+.button.is-success#configSaveBtn {
+  background-color: #103277 !important;
+  border-color: #103277 !important;
+  color: white !important;
+  font-size: 1.2rem !important;
+  padding: 0.7em 1.4em !important;
+  transition: background-color 0.3s ease !important;
+}
+
+#configSaveBtn:hover,
+.button.is-success#configSaveBtn:hover {
+  background-color: #09245a !important;
+  border-color: #09245a !important;
+  box-shadow: 0 2px 5px rgba(9, 36, 90, 0.3) !important;
+}
+
 .device-row {
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -280,6 +297,26 @@ button.configure-btn:hover,
 .has-text-link.has-text-weight-medium {
   color: inherit !important;
   font-weight: normal !important;
+}
+
+.device-image {
+  max-height: 150px;
+  max-width: 100%;
+  object-fit: contain;
+  margin-bottom: 1.5rem;
+  background-color: #fafafa;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
+  border: 1px solid #f0f0f0;
+}
+
+.has-text-centered {
+  text-align: center;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
 }
 
 @media screen and (max-width: 768px) {

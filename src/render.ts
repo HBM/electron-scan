@@ -8,9 +8,14 @@ declare namespace Electron {
 }
 
 // @ts-ignore
+const path = require('path');
+const fs = require('fs');
 const electronRemote = require('@electron/remote');
 const { dialog, Menu } = electronRemote;
 const { ipcRenderer } = require('electron');
+
+// Image Map für Geräte Bildern
+const { imageMap } = require('./icons/map');
 
 interface HbkDevice {
     jsonrpc: string;
@@ -327,6 +332,31 @@ function initScanner() {
             showAlert('Failed to configure device', 'error');
         }
     }
+
+    function getDeviceImage(device: HbkDevice): string {
+        const deviceType = device.params.device.type.toLowerCase();
+        let imageName = imageMap[deviceType];
+        
+        if (!imageName && device.params.device.familyType) {
+            const familyType = device.params.device.familyType.toLowerCase();
+            imageName = imageMap[familyType];
+        }
+        
+        if (!imageName) {
+            return 'assets/default-device.webp';
+        }
+        
+        const distPath = path.join(__dirname, 'icons', imageName);
+        const srcPath = path.join(__dirname, '../src/icons', imageName);
+        
+        if (fs.existsSync(distPath)) {
+            return `icons/${imageName}`;
+        } else if (fs.existsSync(srcPath)) {
+            return `../src/icons/${imageName}`;
+        } else {
+            return 'assets/default-device.webp';
+        }
+    }
     
     // Geräte Details werden gezeigt wenn Gerät geclickt wird
     function toggleDeviceDetails(uuid: string) {
@@ -369,9 +399,16 @@ function initScanner() {
     
     // Geräte Details mit Elemente erstellt
     function populateDeviceDetails(device: HbkDevice, container: Element) {
+        const imagePath = getDeviceImage(device);
+
         container.innerHTML = `
         <div class="device-details-container">
             <div class="columns is-multiline">
+                <!-- Gerät Bild -->
+                <div class="column is-full has-text-centered mb-4">
+                    <img src="${imagePath}" alt="${device.params.device.name}" class="device-image"
+                        onerror="this.onerror=null; this.src='assets/default-device.webp';">
+                </div>
                 <!-- Info -->
                 <div class="column is-half">
                     <div class="detail-card">
@@ -422,7 +459,7 @@ function initScanner() {
                 <!-- IP Addressen -->
                 <div class="column is-half">
                     <div class="detail-card">
-                        <h4 class="title is-5 has-text-info">
+                        <h4 class="title is-5 has-text-primary">
                             <span class="icon-text">
                                 <span class="icon"><i class="fas fa-globe"></i></span>
                                 <span>IPv4 Addresses</span>
@@ -454,7 +491,7 @@ function initScanner() {
                 <!-- Services -->
                 <div class="column is-half">
                     <div class="detail-card">
-                        <h4 class="title is-5 has-text-info">
+                        <h4 class="title is-5 has-text-primary">
                             <span class="icon-text">
                                 <span class="icon"><i class="fas fa-server"></i></span>
                                 <span>Services</span>
@@ -486,7 +523,7 @@ function initScanner() {
                 <!-- IPv6 Addresses Section -->
                 <div class="column is-full">
                     <div class="detail-card">
-                        <h4 class="title is-5 has-text-grey">
+                        <h4 class="title is-5 has-text-primary">
                             <span class="icon-text">
                                 <span class="icon"><i class="fas fa-globe-americas"></i></span>
                                 <span>IPv6 Addresses</span>

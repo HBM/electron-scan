@@ -27,7 +27,8 @@
     "package": "npm run build && electron-forge package",
     "make": "npm run build && electron-forge make",
     "publish": "npm run build && electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "echo \"No linting configured\"",
+    "postbuild": "xcopy /E /I /Y src\\icons dist\\icons && xcopy /E /I /Y src\\assets dist\\assets"
   },
   "browserslist": {
     "production": [
