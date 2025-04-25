@@ -60,7 +60,18 @@ export class HBKScanner extends EventEmitter {
   }
 
   stopScanning = (): void => {
-    this.#socket.close()
+    try {
+      if (this.#socket) {
+        try {
+          this.#socket.close();
+        } catch (err) {
+          console.log('Socket already closed or invalid state:', err);
+        }
+      }
+      // Cleanup code
+    } catch (error) {
+      console.error('Error in stopScanning:', error);
+    }
   }
 
   addListener<T extends typeof HBKDEVICE | 'error'>(

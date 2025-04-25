@@ -171,12 +171,57 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
+  console.log('Window closed, cleaning up resources...');
   if (scanner) {
-    scanner.stopScanning();
+    try {
+      scanner.stopScanning();
+      console.log('Scanner stopped successfully');
+    } catch (error) {
+      console.error('Error stopping scanner:', error);
+    }
     scanner = null;
   }
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+process.on('SIGINT', () => {
+  console.log('Received SIGINT signal. Closing application...');
+  if (scanner) {
+    try {
+      scanner.stopScanning();
+    } catch (error) {
+      console.error('Failed to stop scanner on SIGINT:', error);
+    }
+    scanner = null;
+  }
+  app.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM signal. Closing application...');
+  if (scanner) {
+    try {
+      scanner.stopScanning();
+    } catch (error) {
+      console.error('Failed to stop scanner on SIGTERM:', error);
+    }
+    scanner = null;
+  }
+  app.exit(0);
+});
+
+app.on('before-quit', () => {
+  console.log('Preparing to quit application...');
+  if (scanner) {
+    try {
+      scanner.stopScanning();
+      console.log('Scanner stopped successfully');
+    } catch (error) {
+      console.error('Failed to stop scanner before quitting:', error);
+    }
+    scanner = null;
   }
 });
 
