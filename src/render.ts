@@ -359,23 +359,20 @@ function initScanner() {
     }
 
     function getDeviceWebsite(device: HbkDevice): string {
-        // MIT ECHTEN WEBSITE URL IMPLEMENTIEREN
-        const deviceType = device.params.device.type.toLowerCase();
-        // Mock
-        const ipAddress = device.params.netSettings.interface.ipv4[0]?.address || '0.0.0.0';
+        // IPv4
+        const ipv4Address = device.params.netSettings.interface.ipv4 && 
+                        device.params.netSettings.interface.ipv4.length > 0 
+                        ? device.params.netSettings.interface.ipv4[0].address 
+                        : null;
+    
+        // IPv6
+        if (!ipv4Address && device.params.netSettings.interface.ipv6 && 
+            device.params.netSettings.interface.ipv6.length > 0) {
+            const ipv6 = device.params.netSettings.interface.ipv6[0].address;
+            return `http://[${ipv6}]`;
+        }
         
-        // Mock
-        return `http://${ipAddress}`;
-        
-        // Echte implementierung
-        // return deviceWebsiteMap[deviceType] || `http://${ipAddress}`;
-        /*
-            const websiteMap: Record<string, string> = {
-            'mx410': 'http://example.com/mx410',
-            'mx460': 'http://example.com/mx460',
-            // Add more mappings as needed
-        };*/
-        // EVENT LISTENR IMPLEMENTIEREN (IN POPULATEDEVICE)
+        return ipv4Address ? `http://${ipv4Address}` : '#';
     }
     
     // Geräte Details werden gezeigt wenn Gerät geclickt wird
@@ -431,14 +428,22 @@ function initScanner() {
                         onerror="this.onerror=null; this.src='assets/default-device.webp';">
                     
                     <!-- Website Link -->
-                    <div class="mt-3">
-                        <a href="#" class="button is-link website-link" data-url="${websiteUrl}">
-                            <span class="icon">
-                                <i class="fas fa-external-link-alt"></i>
-                            </span>
-                            <span>Open Device Website</span>
-                        </a>
-                    </div>
+                        <div class="mt-3">
+                            ${websiteUrl !== '#' ? 
+                                `<a href="#" class="button is-link website-link" data-url="${websiteUrl}">
+                                    <span class="icon">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </span>
+                                    <span>Open Device Website</span>
+                                </a>` : 
+                                `<button class="button is-link website-link" disabled>
+                                    <span class="icon">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </span>
+                                    <span>No Web Website Available</span>
+                                </button>`
+                            }
+                        </div>
                 </div>
                 <!-- Info -->
                 <div class="column is-half">
@@ -585,6 +590,26 @@ function initScanner() {
             </div>
         </div>
         `;
+        
+        // Event Listener für Website Link
+        const websiteLink = container.querySelector('.website-link');
+        if (websiteLink) {
+            websiteLink.addEventListener('click', (event) => {
+                event.preventDefault();
+                const url = websiteLink.getAttribute('data-url');
+                
+                // Kein valides IP Adresse, Browser nicht öffnen
+                if (url && url !== '#') {
+                    const { shell } = require('electron');
+                    shell.openExternal(url).catch(err => {
+                        console.error('Failed to open device website:', err);
+                        showAlert('Failed to open device website. Please make sure the device is accessible.', 'error');
+                    });
+                } else {
+                    showAlert('No valid IP address available for this device', 'error');
+                }
+            });
+        }
     }
     
     // Alert Nachrichten
