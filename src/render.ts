@@ -62,6 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initScanner() {
+    interface DeviceStatus {
+        device: HbkDevice;
+        lastSeen: number;  // timestamp für online/offline tracking
+        isOnline: boolean;
+    }
+
     ipcRenderer.on('scanner-status', (_event, status) => {
         console.log('Scanner status updated:', status);
         if (status === 'running') {
@@ -93,7 +99,7 @@ function initScanner() {
     const configSaveBtn = document.getElementById('configSaveBtn') as HTMLButtonElement;
     const cancelConfigBtns = document.querySelectorAll('.cancel-config, .modal-background, .delete');
 
-    const discoveredDevices = new Map();
+    const discoveredDevices = new Map<string, DeviceStatus>();
     let isScanning = false;
     let currentDeviceUuid = '';
 
@@ -173,11 +179,15 @@ function initScanner() {
     // Fügt Geräte zu Geräte Liste hin
     function addOrUpdateDevice(device: HbkDevice) {
         const uuid = device.params.device.uuid;
-
+        const now = Date.now();
         const isNewDevice = !discoveredDevices.has(uuid);
         
         // Gerät speichern
-        discoveredDevices.set(uuid, device);
+        discoveredDevices.set(uuid, {
+            device: device,
+            lastSeen: now,
+            isOnline: true
+        });
         
         const noDevicesRow = document.getElementById('no-devices');
         if (noDevicesRow) {
@@ -199,11 +209,18 @@ function initScanner() {
         
         // IPv4 addresse
         const ipAddress = device.params.netSettings.interface.ipv4[0]?.address || 'N/A';
+
+        const isOnline = discoveredDevices.get(uuid)?.isOnline ?? true;
+        const lastSeen = discoveredDevices.get(uuid)?.lastSeen ?? now;
+        const statusClass = isOnline ? 'online' : 'offline';
+        const statusTitle = isOnline 
+            ? 'Online' 
+            : `Offline - Last seen ${formatTimeSince(lastSeen)}`;
         
         // Update row content
         deviceRow.innerHTML = `
             <td>
-                <span class="status-indicator online"></span>
+                <span class="status-indicator ${statusClass}" title="${statusTitle}"></span>
                 ${device.params.device.name}
             </td>
             <td>${device.params.device.type}</td>
@@ -248,11 +265,19 @@ function initScanner() {
                 openConfigModal(uuid);
             });
         }
+
+        // Status Indikator aktualisiert
+        const statusIndicator = deviceRow.querySelector('.status-indicator');
+        if (statusIndicator) {
+            statusIndicator.className = 'status-indicator online';
+            statusIndicator.setAttribute('title', 'Online');
+        }
     }
     
     // Konfiguration Modal
     function openConfigModal(uuid: string) {
-        const device = discoveredDevices.get(uuid);
+        const deviceStatus = discoveredDevices.get(uuid);
+        const device = deviceStatus?.device;
         if (!device) {
             showAlert(`Device ${uuid} not found`, 'error');
             return;
@@ -276,9 +301,10 @@ function initScanner() {
         const ip = configIp.value;
         const netmask = configNetmask.value;
 
-        const existingDevice = discoveredDevices.get(uuid);
+        const deviceStatus = discoveredDevices.get(uuid);
+        const existingDevice = deviceStatus?.device;
 
-        const interfaceName = existingDevice?.params.netSettings.interface.name;
+        const interfaceName = existingDevice?.params.netSettings.interface.name || '';
         
         if (!uuid || !ip || !netmask) {
             showAlert('Fill all required fields', 'error');
@@ -307,7 +333,8 @@ function initScanner() {
             
             if (response.success) {
                 // Neue Konfig Werte
-                const device = discoveredDevices.get(uuid);
+                const deviceStatus = discoveredDevices.get(uuid);
+                const device = deviceStatus?.device;
                 if (device && device.params.netSettings.interface.ipv4[0]) {
                     device.params.netSettings.interface.ipv4[0].address = ip;
                     device.params.netSettings.interface.ipv4[0].netmask = netmask;
@@ -402,7 +429,7 @@ function initScanner() {
         } else {
             const detailsContent = detailsRow.querySelector('.details-content');
             if (detailsContent) {
-                populateDeviceDetails(device, detailsContent);
+                populateDeviceDetails(device.device, detailsContent);
                 
                 // Kleine Verzögerung um sicherzustellen dass das DOM aktualisiert wird
                 setTimeout(() => {
@@ -428,22 +455,22 @@ function initScanner() {
                         onerror="this.onerror=null; this.src='assets/default-device.webp';">
                     
                     <!-- Website Link -->
-                        <div class="mt-3">
-                            ${websiteUrl !== '#' ? 
-                                `<a href="#" class="button is-link website-link" data-url="${websiteUrl}">
-                                    <span class="icon">
-                                        <i class="fas fa-external-link-alt"></i>
-                                    </span>
-                                    <span>Open Device Website</span>
-                                </a>` : 
-                                `<button class="button is-link website-link" disabled>
-                                    <span class="icon">
-                                        <i class="fas fa-external-link-alt"></i>
-                                    </span>
-                                    <span>No Web Website Available</span>
-                                </button>`
-                            }
-                        </div>
+                    <div class="mt-3">
+                        ${websiteUrl !== '#' ? 
+                            `<a href="#" class="button is-link website-link" data-url="${websiteUrl}">
+                                <span class="icon">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </span>
+                                <span>Open Device Website</span>
+                            </a>` : 
+                            `<button class="button is-link website-link" disabled>
+                                <span class="icon">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </span>
+                                <span>No Web Website Available</span>
+                            </button>`
+                        }
+                    </div>
                 </div>
                 <!-- Info -->
                 <div class="column is-half">
@@ -637,4 +664,60 @@ function initScanner() {
             }, 5000);
         }
     }
+
+    function startStatusChecker() {
+        // Gerät Status jede 5 Sekunden gecheckt
+        const checkInterval = setInterval(() => {
+            const now = Date.now();
+            const offlineThreshold = 15000; // 15 Sekunden
+            
+            // Jede Gerät Status aktualisiert
+            discoveredDevices.forEach((deviceStatus, uuid) => {
+                const timeSinceLastSeen = now - deviceStatus.lastSeen;
+                const wasOnline = deviceStatus.isOnline;
+                
+                // Als Offline markieren
+                if (timeSinceLastSeen > offlineThreshold) {
+                    deviceStatus.isOnline = false;
+                }
+                
+                if (wasOnline !== deviceStatus.isOnline) {
+                    updateDeviceStatusInUI(uuid, deviceStatus);
+                }
+            });
+        }, 5000);
+        
+        window.addEventListener('beforeunload', () => {
+            clearInterval(checkInterval);
+        });
+    }
+
+    function updateDeviceStatusInUI(uuid: string, deviceStatus: DeviceStatus) {
+        const deviceRow = document.getElementById(`device-${uuid}`);
+        if (!deviceRow) return;
+        
+        const statusIndicator = deviceRow.querySelector('.status-indicator');
+        if (!statusIndicator) return;
+        
+        if (deviceStatus.isOnline) {
+            statusIndicator.className = 'status-indicator online';
+            statusIndicator.setAttribute('title', 'Online');
+        } else {
+            statusIndicator.className = 'status-indicator offline';
+            const lastSeenDate = new Date(deviceStatus.lastSeen);
+            const lastSeenStr = lastSeenDate.toLocaleTimeString();
+            statusIndicator.setAttribute('title', `Offline - Last seen at ${lastSeenStr}`);
+        }
+    }
+
+    function formatTimeSince(timestamp: number): string {
+        const seconds = Math.floor((Date.now() - timestamp) / 1000);
+        
+        if (seconds < 60) return `${seconds} seconds ago`;
+        if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+        if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+        return `${Math.floor(seconds / 86400)} days ago`;
+    }
+
+    startStatusChecker();
 }

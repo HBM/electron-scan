@@ -158,6 +158,24 @@ body {
   height: 18px;
   border-radius: 50%;
   margin-right: 15px;
+  position: relative;
+  cursor: help;
+}
+
+.status-indicator:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 0;
+  transform: translateX(0);
+  top: -30px;
+  background: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .status-indicator.online {
@@ -168,6 +186,15 @@ body {
 .status-indicator.offline {
   background-color: #f14668;
   box-shadow: 0 0 5px rgba(241, 70, 104, 0.5);
+}
+
+.status-indicator.online:hover::after {
+  min-width: 60px;
+  width: auto;
+}
+
+.status-indicator.offline:hover::after {
+  min-width: 150px;
 }
 
 .configure-btn,
@@ -388,5 +415,17 @@ button.configure-btn:hover,
   
   .device-details-container {
     padding: 1.25rem;
+  }
+
+  .status-indicator:hover::after {
+    font-size: 0.7rem;
+  }
+  
+  .status-indicator.online:hover::after {
+    min-width: 50px;
+  }
+  
+  .status-indicator.offline:hover::after {
+    min-width: 120px;
   }
 }
