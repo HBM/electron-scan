@@ -3,92 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <title>HBK Device Discovery</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="index.css" />
-    <script defer src="render.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
-    <!-- App Bar -->
-    <nav class="app-bar">
-      <div class="app-bar-content">
-        <div class="app-logo">
-          <img src="assets/hbk-logo.png" alt="HBK Logo">
-        </div>
-        <div class="app-title">
-          <h1 class="title is-4 has-text-white">HBK Device Discovery</h1>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Filtern -->
-    <div class="filters-container">
-      <!-- Filtern werden später hier implementiert werden -->
-
-      <!-- Device Scanner -->
-        <button id="scanBtn" class="button is-primary is-medium">Start Scanning</button>
-          
-        <!-- Alerts -->
-        <div id="scannerAlerts" class="notification is-light mt-3" style="display: none;">
-          <button class="delete"></button>
-          <p id="alertMessage"></p>
-        </div>
-    </div>
-
-    <!-- Geräte Liste -->
-    <section class="device-section">
-      <div class="device-list-header">
-        <h2 class="subtitle is-4">Discovered Devices</h2>
-      </div>
-      <div class="table-container">
-        <table class="table is-fullwidth is-hoverable">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>UUID</th>
-              <th>IP Address</th>
-              <th> </th>
-            </tr>
-          </thead>
-          <tbody id="deviceList">
-            <tr id="no-devices">
-              <td colspan="5" class="has-text-centered">No devices found yet</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Geräte Knofiguration -->
-    <div id="configModal" class="modal">
-      <div class="modal-background"></div>
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <p class="modal-card-title">Configure Device</p>
-          <button class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-          <div class="field">
-            <label class="label">IP Address</label>
-            <div class="control">
-              <input id="configIp" class="input" type="text" placeholder="192.168.1.100">
-            </div>
-          </div>
-          <div class="field">
-            <label class="label">Netmask</label>
-            <div class="control">
-              <input id="configNetmask" class="input" type="text" placeholder="255.255.255.0">
-            </div>
-          </div>
-        </section>
-        <footer class="modal-card-foot">
-          <button id="configSaveBtn" class="button is-success">Apply Configuration</button>
-          <button class="button cancel-config">Cancel</button>
-        </footer>
-      </div>
-    </div>
-
-    </div>
+    <div id="root"></div>
+    <script src="renderer.js"></script>
   </body>
 </html>

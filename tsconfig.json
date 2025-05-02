@@ -18,8 +18,10 @@
     "paths": {
       "*": ["node_modules/*", "src/*"]
     },
-    "allowJs": true
-  },
+    "allowJs": true,
+    "jsx": "react",
+    "skipLibCheck": true
+    },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }
