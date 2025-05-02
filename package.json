@@ -19,7 +19,7 @@
     "example:bonjour": "esbuild examples/BonjourScan.ts  --bundle --outfile=build/bonjour.cjs --format=cjs --platform=node && node build/bonjour.cjs",
     "example:hbk": "esbuild examples/hbkScan.ts  --bundle --outfile=build/hbk.cjs --format=cjs --platform=node && node build/hbk.cjs",
     "example:upnp": "esbuild examples/upnpScan.ts  --bundle --outfile=build/upnp.cjs --format=cjs --platform=node && node build/upnp.cjs",
-    "dev": "esbuild examples/upnpScan.ts  --bundle --outfile=build/build.cjs --format=cjs --platform=node && node build/build.cjs",
+    "dev": "concurrently \"webpack --watch\" \"electron .\"",
     "mock": "esbuild mock/mock.ts  --bundle --outfile=build/mock.cjs --format=cjs --platform=node && node build/mock.cjs",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -89,9 +89,7 @@
     "@types/node": "^22.13.9",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
-    "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4",
-    "ts-loader": "^9.5.1",
+    "concurrently": "^9.1.2",
     "copyfiles": "^2.4.1",
     "electron": "^34.3.1",
     "electron-squirrel-startup": "^1.0.1",
@@ -101,7 +99,10 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-junit": "^16.0.0",
     "ts-jest": "^29.2.6",
+    "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3",
+    "webpack": "^5.99.7",
+    "webpack-cli": "^5.1.4"
   }
 }
