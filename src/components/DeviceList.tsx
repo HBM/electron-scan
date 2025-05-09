@@ -9,7 +9,8 @@ import {
   TableHead, 
   TableRow, 
   Collapse,
-  Box
+  Box,
+  Chip
 } from '@mui/material';
 import DeviceRow from './DeviceRow';
 import DeviceDetails from './DeviceDetails';
@@ -38,9 +39,24 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onConfigureDevice }) =
         flex: 1,
       }}
     >
-      <Typography variant="h5" component="h2" sx={{ mb: 3, fontWeight: 600 }}>
-        Discovered Devices
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h5" component="h2" sx={{ fontWeight: 600, mr: 2 }}>
+          Discovered Devices
+        </Typography>
+        {devices.length > 0 && (
+          <Chip
+            label={`${devices.length} ${devices.length === 1 ? 'device discovered' : 'devices discovered'}`}
+            size="small"
+            color="primary"
+            sx={{ 
+              fontWeight: 500, 
+              backgroundColor: '#103277',
+              fontSize: '0.75rem',
+              height: '22px'
+            }}
+          />
+        )}
+      </Box>
       
       <TableContainer>
         <Table sx={{ minWidth: 650 }}>
