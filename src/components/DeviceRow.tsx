@@ -30,7 +30,6 @@ const DeviceRow: React.FC<DeviceRowProps> = ({
   const uuid = deviceData.params.device.uuid;
   const ipAddress = deviceData.params.netSettings.interface.ipv4[0]?.address || 'N/A';
   
-  // Format time since last seen
   const formatTimeSince = (timestamp: number): string => {
     const seconds = Math.floor((Date.now() - timestamp) / 1000);
     
@@ -50,7 +49,7 @@ const DeviceRow: React.FC<DeviceRowProps> = ({
         cursor: 'pointer', 
         '&:hover': { backgroundColor: '#f5f5f5' },
         backgroundColor: isExpanded ? '#eef6fc' : 'inherit',
-        borderBottom: isExpanded ? '3px solid #3273dc' : '1px solid rgba(224, 224, 224, 1)',
+        borderBottom: '1px solid rgba(224, 224, 224, 1)',
       }}
       onClick={onToggleDetails}
     >

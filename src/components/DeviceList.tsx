@@ -19,6 +19,8 @@ interface DeviceListProps {
   onConfigureDevice: (device: any) => void;
 }
 
+// Rendert die Liste der gefundenen Geräte
+// Verwaltet die Geräteauswahl und -erweiterung
 const DeviceList: React.FC<DeviceListProps> = ({ devices, onConfigureDevice }) => {
   const [expandedDevice, setExpandedDevice] = useState<string | null>(null);
 
@@ -73,7 +75,7 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onConfigureDevice }) =
                       sx={{ 
                         p: 0,
                         border: expandedDevice === device.device.params.device.uuid ? '1px solid #e0e0e0' : 'none',
-                        borderLeft: expandedDevice === device.device.params.device.uuid ? '6px solid #3273dc' : 'none',
+                        borderLeft: 'none',
                       }}
                     >
                       <Collapse in={expandedDevice === device.device.params.device.uuid}>

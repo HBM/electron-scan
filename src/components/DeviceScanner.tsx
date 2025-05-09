@@ -9,6 +9,8 @@ interface DeviceScannerProps {
   onStopScan: () => void;
 }
 
+// Bietet Steuerelemente (Kontrolle) zum Starten/Stoppen des Scannens
+// Zeigt den Scanstatus an
 const DeviceScanner: React.FC<DeviceScannerProps> = ({
   isScanning,
   onStartScan,

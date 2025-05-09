@@ -22,7 +22,7 @@ const AlertMessage: React.FC<AlertMessageProps> = ({
     if (severity === 'success' && autoHideDuration) {
       timer = setTimeout(() => {
         setOpen(false);
-        setTimeout(onClose, 300); // After animation completes
+        setTimeout(onClose, 300);
       }, autoHideDuration);
     }
     return () => clearTimeout(timer);
@@ -30,10 +30,9 @@ const AlertMessage: React.FC<AlertMessageProps> = ({
 
   const handleClose = () => {
     setOpen(false);
-    setTimeout(onClose, 300); // After animation completes
+    setTimeout(onClose, 300);
   };
 
-  // Map our severity types to MUI AlertColor
   const alertSeverity: AlertColor = 
     severity === 'error' ? 'error' :
     severity === 'success' ? 'success' : 'info';

@@ -1,3 +1,5 @@
+// Modal für die Konfiguration der Netzwerkeinstellungen des Geräts
+
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,

@@ -2,6 +2,12 @@
 // HBK scanning gestartet und rennt in main process
 // Sanner entdeckt Gerät und sendet event das von den main process gefangen wird. main process sendet event zum renderer und renderer erhält event und aktualisert UI
 // Scann wird von Button im Renderer gestartet/gestoppt und eigentliche HbkScanner Funktionen werden im main process angerufen 
+/*
+Electron-Hauptprozessdatei
+Einrichten des Anwendungsfensters und der IPC
+Initialisiert den Gerätescanner
+Kommuniziert Scanner-Ereignisse an den Renderer-Prozess
+*/
 
 declare const __dirname: string;
 declare const require: any;

@@ -1,4 +1,7 @@
 // Hook zur IPC Kommunikation und Device State Management
+// Benutzerdefinierter React-Hook, der den Gerätezustand verwaltet
+// Behandelt die IPC-Kommunikation mit dem Hauptprozess
+// Bietet Methoden zum Starten/Stoppen des Scannens und zur Konfiguration von Geräten
 
 import { useState, useEffect, useCallback } from 'react';
 
@@ -14,14 +17,13 @@ export const useDevices = () => {
   
   const { ipcRenderer } = window.require('electron');
 
-  // Set up IPC listeners
+  // IPC Listeners
   useEffect(() => {
-    // Scanner status updates
     ipcRenderer.on('scanner-status', (_event: any, status: string) => {
       setIsScanning(status === 'running');
     });
     
-    // Device discovery
+    // Device Discovery
     ipcRenderer.on('hbk-device-found', (_event: any, device: any) => {
       setDevices(prevDevices => {
         const uuid = device.params.device.uuid;
@@ -67,7 +69,7 @@ export const useDevices = () => {
     // Check device status periodically
     const statusCheckInterval = setInterval(() => {
       const now = Date.now();
-      const offlineThreshold = 15000; // 15 seconds
+      const offlineThreshold = 15000;
       
       setDevices(prevDevices => {
         let updated = false;
@@ -91,7 +93,6 @@ export const useDevices = () => {
       });
     }, 5000);
     
-    // Clean up
     return () => {
       ipcRenderer.removeAllListeners('scanner-status');
       ipcRenderer.removeAllListeners('hbk-device-found');
@@ -104,7 +105,7 @@ export const useDevices = () => {
   const showAlert = (message: string, type: 'success' | 'error' | 'info') => {
     setAlertInfo({ message, type });
     
-    // Auto-hide success messages
+    // Success messages
     if (type === 'success') {
       setTimeout(() => {
         setAlertInfo(null);
@@ -170,7 +171,6 @@ export const useDevices = () => {
       const response = await ipcRenderer.invoke('configure-device', configMessage);
       
       if (response.success) {
-        // Update local state
         setDevices(prevDevices => {
           const newDevices = new Map(prevDevices);
           const deviceStatus = newDevices.get(uuid);

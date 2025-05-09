@@ -248,13 +248,13 @@ button.configure-btn:hover,
 
 .device-row.expanded {
   background-color: #eef6fc;
-  border-bottom: 3px solid #3273dc;
+  border-bottom: none;
 }
 
 .device-details-row {
   background-color: #f9fbfd;
   transition: all 0.3s ease;
-  border-left: 6px solid #3273dc;
+  border-left: none;
   display: table-row;
 }
 

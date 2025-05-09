@@ -1,4 +1,9 @@
 // React Einstiegspunkt
+/*
+Einstiegspunkt für React
+Erzeugt die React-Root und rendert die App-Komponente
+Richtet das MUI-Theme ein
+*/
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider, createTheme } from '@mui/material/styles';

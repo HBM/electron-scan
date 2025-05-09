@@ -1,7 +1,5 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -12,7 +10,6 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 
 import MemoryIcon from '@mui/icons-material/Memory';
 import RouterIcon from '@mui/icons-material/Router';
@@ -25,6 +22,8 @@ interface DeviceDetailsProps {
   device: any;
 }
 
+// Zeigt detaillierte Informationen über ein ausgewähltes Gerät an
+// Zeigt Gerätebilder, Netzwerkinformationen und Dienste
 const DeviceDetails: React.FC<DeviceDetailsProps> = ({ device }) => {
   const { ipcRenderer } = require('electron');
   const fs = require('fs');

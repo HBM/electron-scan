@@ -1,4 +1,6 @@
-// Main App Komponente
+// Main App/React Komponente
+// Verwaltet den Applikationsstatus mithilfe von Hooks
+// Koordiniert alle anderen UI-Komponenten
 
 import React, { useState, useEffect } from 'react';
 import { Box, Container } from '@mui/material';
@@ -46,7 +48,7 @@ const App: React.FC = () => {
       
       <Container maxWidth={false} disableGutters>
         <DeviceScanner 
-          isScanning={isScanning} 
+          isScanning={isScanning}
           onStartScan={startScanning}
           onStopScan={stopScanning}
         />
