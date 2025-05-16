@@ -218,6 +218,22 @@ export const useDevices = () => {
   const updateFilters = useCallback((newFilters: Partial<DeviceFilters>) => {
     setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
   }, []);
+
+  function getInterfaceTypes(device: any): string[] {
+    const types: string[] = [];
+    if (device.params?.services) {
+      for (const s of device.params.services) {
+        if (typeof s.type === 'string') {
+          const t = s.type.toLowerCase();
+          if (t.includes('hbm') && !types.includes('HBM')) types.push('HBM');
+          if (t.includes('dcp') && !types.includes('DCP')) types.push('DCP');
+          if (t.includes('upnp') && !types.includes('UPNP')) types.push('UPNP');
+          if (t.includes('avahi') && !types.includes('AVAHI')) types.push('AVAHI');
+        }
+      }
+    }
+    return types;
+  }
   
   // Gefiltert Geräte Liste
   const filteredDevices = useMemo(() => {
@@ -235,19 +251,10 @@ export const useDevices = () => {
         return false;
       }
       
-      // TODO!!!
       // Interface Filter
       if (filters.interface.length > 0) {
-        let interfaceType = '';
-        if (device.params.services) {
-          // Example logic - replace with your actual interface determination logic
-          const serviceTypes = device.params.services.map((s: any) => s.type);
-          if (serviceTypes.includes('hbm')) interfaceType = 'HBM';
-          else if (serviceTypes.includes('dcp')) interfaceType = 'DCP';
-          // etc.
-        }
-        
-        if (!filters.interface.includes(interfaceType)) {
+        const deviceInterfaces = getInterfaceTypes(device);
+        if (!filters.interface.some(f => deviceInterfaces.includes(f))) {
           return false;
         }
       }
@@ -260,9 +267,15 @@ export const useDevices = () => {
       }
       
       // Port Filter
-      if (filters.port && 
-          !device.params.services.some((service: any) => 
-            service.port.toString() === filters.port)) {
+      if (
+        filters.port &&
+        !device.params.services.some(
+          (service: any) =>
+            service.port !== undefined &&
+            service.port !== null &&
+            service.port.toString() === filters.port.trim()
+        )
+      ) {
         return false;
       }
       

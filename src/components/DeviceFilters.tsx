@@ -29,6 +29,8 @@ interface DeviceFiltersProps {
   activeFilterCount: number;
 }
 
+const INTERFACE_ORDER = ['HBM', 'DCP', 'UPNP', 'AVAHI'];
+
 const DeviceFilters: React.FC<DeviceFiltersProps> = ({
   filters,
   onFilterChange,
@@ -60,6 +62,8 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
     });
   };
 
+  const sortedInterfaces = INTERFACE_ORDER.filter(i => availableInterfaces.includes(i));
+
   return (
     <Paper
       elevation={2}
@@ -87,7 +91,7 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
             name="name"
             value={filters.name}
             onChange={handleInputChange}
-            placeholder="Search by device name or IP"
+            placeholder="Search by device name"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -200,7 +204,7 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
               </Typography>
               <FormGroup>
                 <Stack direction="row" flexWrap="wrap" spacing={1}>
-                  {availableInterfaces.map((iface) => (
+                  {sortedInterfaces.map((iface) => (
                     <FormControlLabel
                       key={iface}
                       control={
@@ -233,7 +237,7 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
                 onChange={handleInputChange}
                 size="small"
                 variant="outlined"
-                placeholder="e.g. 192.168.1.x"
+                placeholder="e.g. 172.19.190.76"
               />
               <TextField
                 fullWidth

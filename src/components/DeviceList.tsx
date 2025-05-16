@@ -23,15 +23,7 @@ interface DeviceListProps {
 // Rendert die Liste der gefundenen Geräte
 // Verwaltet die Geräteauswahl und -erweiterung
 const DeviceList: React.FC<DeviceListProps> = ({ devices, onConfigureDevice }) => {
-  if (devices.length === 0) {
-    return (
-      <Paper elevation={2} sx={{ p: 3, textAlign: 'center', mb: 2 }}>
-        <Typography variant="body1" color="text.secondary">
-          No devices match your current filters.
-        </Typography>
-      </Paper>
-    );
-  }
+  
   
   const [expandedDevice, setExpandedDevice] = useState<string | null>(null);
 
