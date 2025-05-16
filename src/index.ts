@@ -19,6 +19,8 @@ const path = require('path');
 const remoteMain = require('@electron/remote/main');
 const { initialize, enable } = remoteMain;
 
+import { fileURLToPath } from 'url';
+
 // von Scan-App
 export * from './HbkScanner'
 export * from './Bonjour'
@@ -53,6 +55,11 @@ const createWindow = (): void => {
       contextIsolation: false,
       webSecurity: false,
     },
+    icon: process.platform === 'win32'
+    ? path.join(__dirname, '../src/assets/hbk-logo.ico')  // Windows
+    : process.platform === 'darwin'
+      ? path.join(__dirname, '../src/assets/hbk-logo.icns') // macOS
+      : path.join(__dirname, '../src/assets/hbk-logo.png')  // Linux
   });
 
   enable(mainWindow.webContents);
