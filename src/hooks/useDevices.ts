@@ -3,7 +3,16 @@
 // Behandelt die IPC-Kommunikation mit dem Hauptprozess
 // Bietet Methoden zum Starten/Stoppen des Scannens und zur Konfiguration von Geräten
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+// Filtern Interface
+export interface DeviceFilters {
+  name: string;
+  family: string[]; 
+  interface: string[];
+  ipAddress: string;
+  port: string;
+}
 
 interface AlertInfo {
   message: string;
@@ -14,6 +23,15 @@ export const useDevices = () => {
   const [devices, setDevices] = useState<Map<string, any>>(new Map());
   const [isScanning, setIsScanning] = useState(false);
   const [alertInfo, setAlertInfo] = useState<AlertInfo | null>(null);
+
+  // Filtern State
+  const [filters, setFilters] = useState<DeviceFilters>({
+    name: '',
+    family: [],
+    interface: [],
+    ipAddress: '',
+    port: '',
+  });
   
   const { ipcRenderer } = window.require('electron');
 
@@ -196,8 +214,67 @@ export const useDevices = () => {
     }
   }, [devices]);
 
+  // Filtern updaten
+  const updateFilters = useCallback((newFilters: Partial<DeviceFilters>) => {
+    setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
+  }, []);
+  
+  // Gefiltert Geräte Liste
+  const filteredDevices = useMemo(() => {
+    return Array.from(devices.values()).filter(deviceStatus => {
+      const device = deviceStatus.device;
+      
+      // Name Filter
+      if (filters.name && !device.params.device.name.toLowerCase().includes(filters.name.toLowerCase())) {
+        return false;
+      }
+      
+      // Family Filter
+      if (filters.family.length > 0 && 
+          !filters.family.includes(device.params.device.familyType)) {
+        return false;
+      }
+      
+      // TODO!!!
+      // Interface Filter
+      if (filters.interface.length > 0) {
+        let interfaceType = '';
+        if (device.params.services) {
+          // Example logic - replace with your actual interface determination logic
+          const serviceTypes = device.params.services.map((s: any) => s.type);
+          if (serviceTypes.includes('hbm')) interfaceType = 'HBM';
+          else if (serviceTypes.includes('dcp')) interfaceType = 'DCP';
+          // etc.
+        }
+        
+        if (!filters.interface.includes(interfaceType)) {
+          return false;
+        }
+      }
+      
+      // IP Addresse Filter
+      if (filters.ipAddress && 
+          !device.params.netSettings.interface.ipv4.some((ip: any) => 
+            ip.address.includes(filters.ipAddress))) {
+        return false;
+      }
+      
+      // Port Filter
+      if (filters.port && 
+          !device.params.services.some((service: any) => 
+            service.port.toString() === filters.port)) {
+        return false;
+      }
+      
+      return true;
+    });
+  }, [devices, filters]);
+
   return {
     devices,
+    filteredDevices,
+    filters,
+    updateFilters,
     isScanning,
     alertInfo,
     clearAlert,
