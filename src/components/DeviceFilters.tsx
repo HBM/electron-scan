@@ -15,6 +15,7 @@ import {
   InputAdornment,
   Stack,
   Divider,
+  FormHelperText
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
@@ -31,6 +32,11 @@ interface DeviceFiltersProps {
 
 const INTERFACE_ORDER = ['HBM', 'DCP', 'UPNP', 'AVAHI'];
 
+// IPv4 Validierungsmuster
+const IP_REGEX = /^(25[0-5]|2[0-4]\d|[01]?\d\d?)(\.(25[0-5]|2[0-4]\d|[01]?\d\d?)){0,3}$/;
+// Port Validierungsmuster (1-65535)
+const PORT_REGEX = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/;
+
 const DeviceFilters: React.FC<DeviceFiltersProps> = ({
   filters,
   onFilterChange,
@@ -39,12 +45,71 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
   activeFilterCount
 }) => {
   const [expanded, setExpanded] = useState(false);
+  // Validierungsfehler
+  const [errors, setErrors] = useState({
+    ipAddress: false,
+    port: false,
+  });
 
+  // Eingabevalidierung und -sanitisierung vor Aktualisierung der Filter
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onFilterChange({ [event.target.name]: event.target.value });
+    const { name, value } = event.target;
+    
+    // Name-Eingabe sanitiert
+    if (name === 'name') {
+      // XSS-Schutz
+      // 50 Zeichen Eingabe max
+      const sanitizedValue = value.slice(0, 50).replace(/[^\w\s-_.]/g, '');
+      onFilterChange({ [name]: sanitizedValue });
+      return;
+    }
+
+    // IP-Adresse Validierung
+    if (name === 'ipAddress') {
+      if (/^[0-9.]*$/.test(value)) {
+        onFilterChange({ [name]: value });
+        const isCompleteIP = value.split('.').length === 4 && value.split('.').every(part => part.length > 0);
+        // Fehler nur anzeigen wenn vollständige aber ungültige IP 
+        setErrors(prev => ({ 
+          ...prev, 
+          ipAddress: isCompleteIP && !IP_REGEX.test(value) 
+        }));
+      }
+      return;
+    }
+    
+    // Port Validierung
+    if (name === 'port') {
+      if (/^\d*$/.test(value)) {
+        onFilterChange({ [name]: value });
+        
+        if (value.length > 0) {
+          const portNum = parseInt(value, 10);
+          const isValidPort = !isNaN(portNum) && portNum >= 1 && portNum <= 65535;
+          setErrors(prev => ({ ...prev, port: !isValidPort }));
+        } else {
+          setErrors(prev => ({ ...prev, port: false }));
+        }
+      }
+      return;
+    }
+
+    onFilterChange({ [name]: value });
   };
 
   const handleCheckboxChange = (filterKey: 'family' | 'interface', value: string) => {
+    // Validierung der Checkbox-Werte gegen vordefinierte Arrays
+    // Schützt vor Injection-Angriffen durch manipulierte Werte
+    if (filterKey === 'family' && !availableFamilies.includes(value)) {
+      console.error('Ungültiger Family-Wert: ', value);
+      return;
+    }
+    
+    if (filterKey === 'interface' && !availableInterfaces.includes(value)) {
+      console.error('Ungültiger Interface-Wert: ', value);
+      return;
+    }
+    
     const currentValues = filters[filterKey] as string[];
     const newValues = currentValues.includes(value)
       ? currentValues.filter(item => item !== value)
@@ -53,6 +118,12 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
   };
 
   const handleClearFilters = () => {
+    // Zurücksetzen der Validierungsfehler beim Zurücksetzen der Filter
+    setErrors({
+      ipAddress: false,
+      port: false,
+    });
+
     onFilterChange({
       name: '',
       family: [],
@@ -98,6 +169,10 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
                   <SearchIcon color="action" />
                 </InputAdornment>
               ),
+              // Zusätzliche Sicherheitsmaßnahme (max Länge)
+              inputProps: {
+                maxLength: 50,
+              }
             }}
           />
         </Box>
@@ -229,27 +304,53 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
               Network
             </Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <TextField
-                fullWidth
-                label="IP Address"
-                name="ipAddress"
-                value={filters.ipAddress}
-                onChange={handleInputChange}
-                size="small"
-                variant="outlined"
-                placeholder="e.g. 172.19.190.76"
-              />
-              <TextField
-                fullWidth
-                label="Port"
-                name="port"
-                value={filters.port}
-                onChange={handleInputChange}
-                size="small"
-                variant="outlined"
-                placeholder="e.g. 80"
-                type="number"
-              />
+              <Box sx={{ width: '100%' }}>
+                <TextField
+                  fullWidth
+                  label="IP Address"
+                  name="ipAddress"
+                  value={filters.ipAddress}
+                  onChange={handleInputChange}
+                  size="small"
+                  variant="outlined"
+                  placeholder="e.g. 172.19.190.76"
+                  error={errors.ipAddress}
+                  InputProps={{
+                    inputProps: {
+                      maxLength: 15,
+                    }
+                  }}
+                />
+                {errors.ipAddress && (
+                  <FormHelperText error>
+                    Please provide a valid IP-Address
+                  </FormHelperText>
+                )}
+              </Box>
+              <Box sx={{ width: '100%' }}>
+                <TextField
+                  fullWidth
+                  label="Port"
+                  name="port"
+                  value={filters.port}
+                  onChange={handleInputChange}
+                  size="small"
+                  variant="outlined"
+                  placeholder="e.g. 80"
+                  type="text"
+                  error={errors.port}
+                  InputProps={{
+                    inputProps: {
+                      maxLength: 5,
+                    }
+                  }}
+                />
+                {errors.port && (
+                  <FormHelperText error>
+                    Please provide a valid Port (1-65535)
+                  </FormHelperText>
+                )}
+              </Box>
             </Stack>
           </Box>
         </AccordionDetails>

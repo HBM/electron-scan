@@ -119,7 +119,6 @@ export class UPNPSocket {
         try {
           cb(device)
         } catch {
-          // TODO Error Handling
         }
       })
   }

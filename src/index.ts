@@ -33,6 +33,8 @@ export type * from './Types'
 import { HBKScanner } from './HbkScanner';
 import { HBKDEVICE } from './Types';
 
+const inDevelopment = !app.isPackaged || process.env.NODE_ENV === 'development';
+
 initialize();
 
 const electronSquirrelStartup = require('electron-squirrel-startup');
@@ -53,7 +55,8 @@ const createWindow = (): void => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      webSecurity: false,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
     },
     icon: process.platform === 'win32'
     ? path.join(__dirname, '../src/assets/hbk-logo.ico')  // Windows
@@ -69,7 +72,14 @@ const createWindow = (): void => {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        'Content-Security-Policy': ["script-src 'self' 'unsafe-inline' 'unsafe-eval'"]
+        'Content-Security-Policy': [
+          "default-src 'self'; " +
+          `script-src 'self'${inDevelopment ? " 'unsafe-eval'" : ""}; ` +
+          "style-src 'self' 'unsafe-inline'; " +
+          "img-src 'self' data:; " +
+          "connect-src 'self' http://localhost:* ws://localhost:*; " +
+          "font-src 'self';"
+        ]
       }
     });
   });

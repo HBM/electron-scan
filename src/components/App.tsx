@@ -39,7 +39,6 @@ const App: React.FC = () => {
     return Array.from(families).sort();
   }, [devices]);
 
-  // TODO!!!
   // Eindeutige Interfaces abrufen
   const availableInterfaces = useMemo(() => {
     const interfaces = new Set<string>(['HBM', 'DCP', 'UPNP', 'AVAHI']);
