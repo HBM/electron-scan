@@ -74,11 +74,11 @@
     "stylelint": "^16.14.1",
     "typescript-json-schema": "^0.65.1",
     "@electron/remote": "^2.1.2",
+    "electron-squirrel-startup": "^1.0.1",
     "@electron/fuses": "^1.8.0"
   },
   "devDependencies": {
     "electron": "^34.3.1",
-    "electron-squirrel-startup": "^1.0.1",
     "@electron-forge/cli": "^7.7.0",
     "@electron-forge/maker-deb": "^7.7.0",
     "@electron-forge/maker-rpm": "^7.7.0",
