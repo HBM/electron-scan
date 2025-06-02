@@ -46,7 +46,7 @@ const config: ForgeConfig = {
       config: {
         repository: {
           name: 'electron-scan',
-          owner: 'florian-schopp'
+          owner: 'HBM'
         },
         prerelease: true
       }
