@@ -66,11 +66,16 @@ const App: React.FC = () => {
     setSelectedDevice(null);
   };
 
-  const handleConfigureSave = async (ip: string, netmask: string) => {
-    if (selectedDevice) {
-      await configureDevice(selectedDevice.params.device.uuid, ip, netmask);
-      setConfigDialogOpen(false);
-    }
+  const handleConfigureSave = (config: {
+    uuid: string;
+    useDhcp: boolean;
+    ip: string;
+    netmask: string;
+    gateway: string;
+    interfaceName: string;
+  }) => {
+    configureDevice(config);
+    setConfigDialogOpen(false);
   };
 
   return (

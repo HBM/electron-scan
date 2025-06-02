@@ -210,7 +210,7 @@ export const useDevices = () => {
     }
   }, []);
   
-  const configureDevice = useCallback(async (uuid: string, ip: string, netmask: string) => {
+  const configureDevice = useCallback(async (config: { uuid: string; useDhcp: boolean; ip: string; netmask: string; gateway: string; interfaceName: string;}) => {
     // Rate-Limiting
     const now = Date.now();
     if (now - configRequestTimestamp.current < CONFIG_COOLDOWN) {
@@ -220,51 +220,61 @@ export const useDevices = () => {
     configRequestTimestamp.current = now;
     
     // Validieren der Eingaben
-    if (!uuid || !uuid.trim()) {
+    if (!config.uuid || !config.uuid.trim()) {
       showAlert('Invalid device ID', 'error');
       return;
     }
-    
-    if (!IP_REGEX.test(ip)) {
-      showAlert('Invalid IP address format', 'error');
-      return;
-    }
-    
-    if (!NETMASK_REGEX.test(netmask)) {
-      showAlert('Invalid netmask format', 'error');
-      return;
+
+    // Bei DHCP brauchen wir keine IP/Netmask/Gateway zu validieren
+    if (!config.useDhcp) {
+      if (!IP_REGEX.test(config.ip)) {
+        showAlert('Invalid IP address format', 'error');
+        return;
+      }
+      
+      if (!NETMASK_REGEX.test(config.netmask)) {
+        showAlert('Invalid netmask format', 'error');
+        return;
+      }
+      
+      // Gateway ist optional, aber wenn angegeben, muss es gültig sein
+      if (config.gateway && !IP_REGEX.test(config.gateway)) {
+        showAlert('Invalid gateway format', 'error');
+        return;
+      }
     }
 
-    const deviceStatus = devices.get(uuid);
+    const deviceStatus = devices.get(config.uuid);
     if (!deviceStatus) {
-      showAlert(`Device ${uuid} not found`, 'error');
+      showAlert(`Device ${config.uuid} not found`, 'error');
       return;
     }
     
-    const existingDevice = deviceStatus.device;
-    const interfaceName = existingDevice.params.netSettings.interface.name || '';
-    
-    if (!uuid || !ip || !netmask) {
-      showAlert('Fill all required fields', 'error');
-      return;
-    }
-    
-    const configMessage = {
+    // Konfigurationsnachricht basierend auf DHCP-Status
+    let configMessage: any = {
       device: {
-        uuid: uuid.trim()
+        uuid: config.uuid.trim()
       },
       netSettings: {
         interface: {
-          name: interfaceName,
-          ipv4: {
-            manualAddress: ip,
-            manualNetmask: netmask
-          },
-          configurationMethod: 'manual'
+          name: config.interfaceName,
+          configurationMethod: config.useDhcp ? 'dhcp' : 'manual'
         }
       },
       ttl: 120
     };
+    
+    // Manueller Konfiguration
+    if (!config.useDhcp) {
+      configMessage.netSettings.interface.ipv4 = {
+        manualAddress: config.ip,
+        manualNetmask: config.netmask
+      };
+      
+      if (config.gateway) {
+        configMessage.netSettings.interface.ipv4.manualGateway = config.gateway;
+      }
+    }
     
     try {
       const response = await ipcRenderer.invoke('configure-device', configMessage);
@@ -272,21 +282,34 @@ export const useDevices = () => {
       if (response.success) {
         setDevices(prevDevices => {
           const newDevices = new Map(prevDevices);
-          const deviceStatus = newDevices.get(uuid);
+          const deviceStatus = newDevices.get(config.uuid);
           
-          if (deviceStatus && deviceStatus.device.params.netSettings.interface.ipv4[0]) {
-            deviceStatus.device.params.netSettings.interface.ipv4[0].address = ip;
-            deviceStatus.device.params.netSettings.interface.ipv4[0].netmask = netmask;
-            deviceStatus.device.params.netSettings.interface.name = interfaceName;
-            deviceStatus.device.params.netSettings.interface.configurationMethod = 'manual';
+          if (deviceStatus && deviceStatus.device.params.netSettings.interface) {
+            // DHCP-Status aktualisieren
+            deviceStatus.device.params.netSettings.interface.configurationMethod = 
+              config.useDhcp ? 'dhcp' : 'manual';
             
-            newDevices.set(uuid, deviceStatus);
+            // Bei manueller Konfiguration IP-Daten aktualisieren
+            if (!config.useDhcp && deviceStatus.device.params.netSettings.interface.ipv4) {
+              if (deviceStatus.device.params.netSettings.interface.ipv4.length === 0) {
+                deviceStatus.device.params.netSettings.interface.ipv4.push({});
+              }
+              
+              deviceStatus.device.params.netSettings.interface.ipv4[0].address = config.ip;
+              deviceStatus.device.params.netSettings.interface.ipv4[0].netmask = config.netmask;
+              
+              if (config.gateway) {
+                deviceStatus.device.params.netSettings.interface.ipv4[0].gateway = config.gateway;
+              }
+            }
+            
+            newDevices.set(config.uuid, deviceStatus);
           }
           
           return newDevices;
         });
         
-        showAlert(`Configuration sent to device ${uuid}`, 'success');
+        showAlert(`Configuration sent to device ${config.uuid}`, 'success');
       } else {
         const errorMsg = response.error 
           ? response.error.toString().slice(0, 200).replace(/<[^>]*>/g, '')

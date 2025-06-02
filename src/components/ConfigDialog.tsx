@@ -11,19 +11,33 @@ import {
   Box,
   FormHelperText,
   Typography,
-  Divider
+  Divider,
+  Switch,
+  FormControlLabel,
+  Alert
 } from '@mui/material';
 
 interface ConfigDialogProps {
   open: boolean;
   device: any;
   onClose: () => void;
-  onSave: (ip: string, netmask: string) => void;
+  onSave: (config: DeviceConfig) => void;
+}
+
+// Konfigurationsobjekt-Typ
+interface DeviceConfig {
+  uuid: string;
+  useDhcp: boolean;
+  ip: string;
+  netmask: string;
+  gateway: string;
+  interfaceName: string;
 }
 
 // IP- und Netmask-Validierungsmuster
 const IP_REGEX = /^(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)$/;
 const NETMASK_REGEX = /^(255)\.(0|128|192|224|240|248|252|254|255)\.(0|128|192|224|240|248|252|254|255)\.(0|128|192|224|240|248|252|254|255)$/;
+const GATEWAY_REGEX = IP_REGEX;
 
 const ConfigDialog: React.FC<ConfigDialogProps> = ({
   open,
@@ -33,24 +47,38 @@ const ConfigDialog: React.FC<ConfigDialogProps> = ({
 }) => {
   const [ipAddress, setIpAddress] = useState('');
   const [netmask, setNetmask] = useState('');
+  const [gateway, setGateway] = useState('');
+  const [useDhcp, setUseDhcp] = useState(false);
   const [errors, setErrors] = useState({
     ipAddress: false,
-    netmask: false
+    netmask: false,
+    gateway: false
   });
   const [confirmMode, setConfirmMode] = useState(false);
-  const [ipChanged, setIpChanged] = useState(false);
+  const [configChanged, setConfigChanged] = useState(false);
 
   useEffect(() => {
-    if (device && device.params.netSettings.interface.ipv4 && device.params.netSettings.interface.ipv4.length > 0) {
-      const originalIp = device.params.netSettings.interface.ipv4[0].address || '';
-      const originalNetmask = device.params.netSettings.interface.ipv4[0].netmask || '';
+    if (device && device.params?.netSettings?.interface) {
+      setUseDhcp(false);
       
-      setIpAddress(originalIp);
-      setNetmask(originalNetmask);
-      setIpChanged(false);
+      // IP-Adresse, Netzmaske und Gateway laden
+      if (device.params.netSettings.interface.ipv4 && device.params.netSettings.interface.ipv4.length > 0) {
+        const ipv4Config = device.params.netSettings.interface.ipv4[0];
+        
+        setIpAddress(ipv4Config?.address || '');
+        setNetmask(ipv4Config?.netmask || '');
+        setGateway(ipv4Config?.gateway || '');
+      }
+      
+      setConfigChanged(false);
       setConfirmMode(false);
     }
   }, [device, open]);
+
+  const dhcpToggle = () => {
+    setUseDhcp(prev => !prev);
+    setConfigChanged(true);
+  };
 
   // IP-Adresse validiert und aktualisiert
   const handleIpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +98,7 @@ const ConfigDialog: React.FC<ConfigDialogProps> = ({
       }
       
       if (device?.params?.netSettings?.interface?.ipv4[0]?.address !== value) {
-        setIpChanged(true);
+        setConfigChanged(true);
       }
     }
   };
@@ -94,36 +122,84 @@ const ConfigDialog: React.FC<ConfigDialogProps> = ({
     }
   };
 
+  // Gateway validiert und aktualisiert
+  const handleGatewayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    
+    const isTyping = value === '' || /^(25[0-5]|2[0-4]\d|[01]?\d\d?)?(\.(25[0-5]|2[0-4]\d|[01]?\d\d?)?){0,3}$/.test(value);
+    
+    if (isTyping) {
+      const sanitizedValue = value.slice(0, 15);
+      setGateway(sanitizedValue);
+      
+      if (sanitizedValue.length > 0) {
+        const isCompleteGateway = sanitizedValue.split('.').length === 4 && sanitizedValue.split('.').every(part => part.length > 0);
+        
+        setErrors(prev => ({ 
+          ...prev, 
+          gateway: isCompleteGateway && !GATEWAY_REGEX.test(sanitizedValue)
+        }));
+      } else {
+        // Leeres Gateway ist gültig
+        setErrors(prev => ({ ...prev, gateway: false }));
+      }
+      
+      if (device?.params?.netSettings?.interface?.ipv4[0]?.gateway !== sanitizedValue) {
+        setConfigChanged(true);
+      }
+    }
+  };
+
   // Form Validierung
   const isFormValid = () => {
-    return IP_REGEX.test(ipAddress) && NETMASK_REGEX.test(netmask) && 
-           !errors.ipAddress && !errors.netmask;
+    if (useDhcp) {
+      return true; // Bei DHCP müssen keine anderen Felder validiert werden
+    }
+
+    const isGatewayValid = gateway === '' || GATEWAY_REGEX.test(gateway);
+
+    return IP_REGEX.test(ipAddress) && NETMASK_REGEX.test(netmask) && isGatewayValid &&
+           !errors.ipAddress && !errors.netmask && !errors.gateway;
   };
 
   const handleSubmit = () => {
-    // Vollständige Validierung vor dem Speichern
-    if (!IP_REGEX.test(ipAddress)) {
-      setErrors(prev => ({ ...prev, ipAddress: true }));
-      return;
+    // Bei manueller Konfiguration erst alle Felder validieren
+    if (!useDhcp) {
+      if (!IP_REGEX.test(ipAddress)) {
+        setErrors(prev => ({ ...prev, ipAddress: true }));
+        return;
+      }
+      
+      if (!NETMASK_REGEX.test(netmask)) {
+        setErrors(prev => ({ ...prev, netmask: true }));
+        return;
+      }
+      
+      if (gateway !== '' && !GATEWAY_REGEX.test(gateway)) {
+        setErrors(prev => ({ ...prev, gateway: true }));
+        return;
+      }
     }
     
-    if (!NETMASK_REGEX.test(netmask)) {
-      setErrors(prev => ({ ...prev, netmask: true }));
-      return;
-    }
-    
-    // Bestätigung anfordern wenn sich die IP geändert hat
-    if (ipChanged && !confirmMode) {
+    if (configChanged && !confirmMode) {
       setConfirmMode(true);
       return;
     }
     
-    // Rate-Limiting durch UI-Blockierung (cool-down period) --> DoS-Schutz
-    onSave(ipAddress, netmask);
+    const interfaceName = device?.params?.netSettings?.interface?.name || 'ETH0';
+    
+    onSave({
+      uuid: device?.params?.device?.uuid,
+      useDhcp,
+      ip: ipAddress,
+      netmask,
+      gateway,
+      interfaceName
+    });
   };
 
   const handleClose = () => {
-    setErrors({ ipAddress: false, netmask: false });
+    setErrors({ ipAddress: false, netmask: false, gateway: false });
     setConfirmMode(false);
     onClose();
   };
@@ -140,11 +216,24 @@ const ConfigDialog: React.FC<ConfigDialogProps> = ({
                     <strong>Device:</strong> {device?.params?.device?.name || 'Unkown'}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>New IP-Adress:</strong> {ipAddress}
+                    <strong>DHCP:</strong> {useDhcp ? 'Activated' : 'Deactivated'}
                   </Typography>
-                  <Typography variant="body2">
-                    <strong>New Netmask:</strong> {netmask}
-                  </Typography>
+
+                  {!useDhcp && (
+                    <>
+                      <Typography variant="body2">
+                        <strong>New IP-Adress:</strong> {ipAddress}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>New Netmask:</strong> {netmask}
+                      </Typography>
+                      {gateway && (
+                        <Typography variant="body2">
+                          <strong>Gateway:</strong> {gateway}
+                        </Typography>
+                      )}
+                    </>
+                  )}
                 </Box>
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="body2" color="text.secondary">
@@ -156,10 +245,30 @@ const ConfigDialog: React.FC<ConfigDialogProps> = ({
                 <Typography variant="subtitle2" gutterBottom>
                   Network settings for: {device?.params?.device?.name || 'Unkown'}
                 </Typography>
+
+                {/* DHCP Toggle */}
+                <FormControlLabel
+                  control={
+                    <Switch 
+                      checked={useDhcp}
+                      onChange={dhcpToggle}
+                      color="primary"
+                    />
+                  }
+                  label={
+                    <Typography variant="body2">
+                      Activate DHCP (Automatic Network Configuration)
+                    </Typography>
+                  }
+                  sx={{ my: 2, display: 'block' }}
+                />
+
+                {/* Manuelle Konfiguration (deaktiviert wenn DHCP aktiviert wird) */}
                 <TextField
                   label="IP-Adress"
                   value={ipAddress}
                   onChange={handleIpChange}
+                  disabled={useDhcp}
                   fullWidth
                   margin="normal"
                   variant="outlined"
@@ -177,9 +286,10 @@ const ConfigDialog: React.FC<ConfigDialogProps> = ({
                   </FormHelperText>
                 )}
                 <TextField
-                  label="Netzmaske"
+                  label="Netmask"
                   value={netmask}
                   onChange={handleNetmaskChange}
+                  disabled={useDhcp}
                   fullWidth
                   margin="normal"
                   variant="outlined"
@@ -195,6 +305,33 @@ const ConfigDialog: React.FC<ConfigDialogProps> = ({
                   <FormHelperText error>
                     Please provide a valid Netmask (e.g. 255.255.255.0)
                   </FormHelperText>
+                )}
+                <TextField
+                  label="Gateway"
+                  value={gateway}
+                  onChange={handleGatewayChange}
+                  disabled={useDhcp}
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                  placeholder="192.168.1.100"
+                  error={errors.gateway}
+                  InputProps={{
+                    inputProps: {
+                      maxLength: 15
+                    }
+                  }}
+                />
+                {errors.gateway && (
+                  <FormHelperText error>
+                    Please provide a valid Gateway-Address (e.g. 192.168.1.100)
+                  </FormHelperText>
+                )}
+
+                {useDhcp && (
+                  <Alert severity="info" sx={{ mt: 2 }}>
+                    If DHCP is activated, all network settings are automatically obtained from the DHCP server.
+                  </Alert>
                 )}
               </Box>
             )}
