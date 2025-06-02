@@ -21,13 +21,13 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-      - name: Ensure Release exists
-        run: |
-          if ! gh release view v0.0.1; then
-            gh release create v0.0.1 --title "Release v0.0.1" --notes "Initial release."
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      # - name: Ensure Release exists
+      #   run: |
+      #     if ! gh release view v0.0.1; then
+      #       gh release create v0.0.1 --title "Release v0.0.1" --notes "Initial release."
+      #     fi
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: Publish app
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
