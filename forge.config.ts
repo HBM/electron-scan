@@ -10,7 +10,7 @@ const config: ForgeConfig = {
       name: '@electron-forge/maker-squirrel',
       platforms: ['win32'],
       config: {
-        authors: 'Electron contributors'
+        bin: 'HBK Device Discovery'
       }
     },
     {
@@ -31,9 +31,7 @@ const config: ForgeConfig = {
   plugins: [
     {
       name: '@electron-forge/plugin-auto-unpack-natives',
-      config: {
-        bin: 'HBK Device Discovery'
-      }
+      config: {}
     }
   ],
   publishers: [
