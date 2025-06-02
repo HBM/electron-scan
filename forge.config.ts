@@ -45,7 +45,8 @@ const config: ForgeConfig = {
       name: '@electron-forge/publisher-github',
       config: {
         repository: {
-          name: 'HBM/electron-scan'
+          name: 'HBM/electron-scan',
+          owner: 'Florian Schopp'
         },
         prerelease: true
       }
