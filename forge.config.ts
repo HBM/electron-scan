@@ -10,21 +10,24 @@ const config: ForgeConfig = {
       name: '@electron-forge/maker-squirrel',
       platforms: ['win32'],
       config: {
-        bin: 'HBK Device Discovery'
+        bin: 'HBK Device Discovery',
+        executableName: 'HBK Device Discovery'
       }
     },
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
       config: {
-        bin: 'HBK Device Discovery'
+        bin: 'HBK Device Discovery',
+        executableName: 'HBK Device Discovery'
       }
     },
     {
       name: '@electron-forge/maker-deb',
       platforms: ['linux'],
       config: {
-        bin: 'HBK Device Discovery'
+        bin: 'HBK Device Discovery',
+        executableName: 'HBK Device Discovery'
       }
     }
   ],
