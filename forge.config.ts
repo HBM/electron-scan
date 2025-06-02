@@ -11,7 +11,8 @@ const config: ForgeConfig = {
       platforms: ['win32'],
       config: {
         bin: 'HBK Device Discovery',
-        executableName: 'HBK Device Discovery'
+        executableName: 'HBK Device Discovery',
+        icon: 'src/assets/hbk-logo.png'
       }
     },
     {
@@ -19,7 +20,8 @@ const config: ForgeConfig = {
       platforms: ['darwin'],
       config: {
         bin: 'HBK Device Discovery',
-        executableName: 'HBK Device Discovery'
+        executableName: 'HBK Device Discovery',
+        icon: 'src/assets/hbk-logo.png'
       }
     },
     {
@@ -27,7 +29,8 @@ const config: ForgeConfig = {
       platforms: ['linux'],
       config: {
         bin: 'HBK Device Discovery',
-        executableName: 'HBK Device Discovery'
+        executableName: 'HBK Device Discovery',
+        icon: 'src/assets/hbk-logo.png'
       }
     }
   ],

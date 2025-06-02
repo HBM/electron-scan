@@ -4,47 +4,6 @@
   "version": "0.0.1",
   "description": "Electron App für HBK Device Discovery",
   "main": "dist/index.js",
-  "config": {
-    "forge": {
-      "packagerConfig": {
-        "icon": "src/assets/hbk-logo",
-        "asar": true
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "HBK_Device_Discovery",
-            "iconUrl": "src/assets/hbk-logo.ico",
-            "setupIcon": "src/assets/hbk-logo.ico"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin",
-            "linux"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {
-            "options": {
-              "icon": "src/assets/hbk-logo.png"
-            }
-          }
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {
-            "options": {
-              "icon": "src/assets/hbk-logo.png"
-            }
-          }
-        }
-      ]
-    }
-  },
   "scripts": {
     "ci": "npm run ci:eslint && npm run ci:prettier && npm run ci:stylelint && npm run ci:type-check",
     "ci:eslint": "cross-env-shell eslint --max-warnings 0",
