@@ -21,7 +21,10 @@
         },
         {
           "name": "@electron-forge/maker-zip",
-          "platforms": ["darwin", "linux"]
+          "platforms": [
+            "darwin",
+            "linux"
+          ]
         },
         {
           "name": "@electron-forge/maker-deb",
@@ -67,7 +70,7 @@
     "make": "npm run build && electron-forge make",
     "publish": "npm run build && electron-forge publish",
     "lint": "echo \"No linting configured\"",
-    "postbuild": "xcopy /E /I /Y src\\icons dist\\icons && xcopy /E /I /Y src\\assets dist\\assets"
+    "postbuild": "cp -r src/icons dist/icons && cp -r src/assets dist/assets"
   },
   "browserslist": {
     "production": [

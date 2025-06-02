@@ -1,4 +1,4 @@
-import type { ForgeConfig } from '@electron-forge/shared-types';
+import type { ForgeConfig } from '@electron-forge/shared-types'
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -10,7 +10,7 @@ const config: ForgeConfig = {
       name: '@electron-forge/maker-squirrel',
       platforms: ['win32'],
       config: {
-        authors: "Electron contributors"
+        authors: 'Electron contributors'
       }
     },
     {
@@ -22,8 +22,26 @@ const config: ForgeConfig = {
       name: '@electron-forge/maker-deb',
       platforms: ['linux'],
       config: {}
-    },
+    }
+  ],
+  plugins: [
+    {
+      name: '@electron-forge/plugin-auto-unpack-natives',
+      config: {}
+    }
+  ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'delimitertech',
+          name: 'electron-starter'
+        },
+        prerelease: true
+      }
+    }
   ]
-};
+}
 
-export default config;
+export default config
