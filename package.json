@@ -1,7 +1,7 @@
 {
   "name": "electron-scan",
   "productName": "HBK Device Discovery",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Electron App für HBK Device Discovery",
   "main": "dist/index.js",
   "scripts": {
@@ -28,9 +28,8 @@
     "package": "npm run build && electron-forge package",
     "make": "npm run build && electron-forge make",
     "publish": "npm run build && electron-forge publish",
-    "prePublish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
-    "postbuild": "cp -r src/icons dist/icons && cp -r src/assets dist/assets"
+    "postbuild": "cp src/index.html dist/index.html && cp -r src/icons dist/icons && cp -r src/assets dist/assets"
   },
   "browserslist": {
     "production": [
