@@ -27,7 +27,7 @@
     "start": "npm run build && electron-forge start",
     "package": "npm run build && electron-forge package",
     "make": "npm run build && electron-forge make",
-    "publish": "electron-forge publish",
+    "publish": "npm run build && electron-forge publish",
     "prePublish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
     "postbuild": "cp -r src/icons dist/icons && cp -r src/assets dist/assets"
