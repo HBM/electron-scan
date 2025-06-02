@@ -45,8 +45,7 @@ const config: ForgeConfig = {
       name: '@electron-forge/publisher-github',
       config: {
         repository: {
-          owner: 'delimitertech',
-          name: 'electron-starter'
+          name: 'HBM/electron-scan'
         },
         prerelease: true
       }
