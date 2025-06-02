@@ -16,18 +16,24 @@ const config: ForgeConfig = {
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
-      config: {}
+      config: {
+        bin: 'HBK Device Discovery'
+      }
     },
     {
       name: '@electron-forge/maker-deb',
       platforms: ['linux'],
-      config: {}
+      config: {
+        bin: 'HBK Device Discovery'
+      }
     }
   ],
   plugins: [
     {
       name: '@electron-forge/plugin-auto-unpack-natives',
-      config: {}
+      config: {
+        bin: 'HBK Device Discovery'
+      }
     }
   ],
   publishers: [
