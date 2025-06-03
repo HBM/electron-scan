@@ -9,7 +9,7 @@ export interface DeviceParams {
   apiVersion: string
   device: Device
   netSettings: NetworkSetting
-  services: service[]
+  services?: service[]
   expiration: number
 }
 export interface Device {
@@ -33,9 +33,10 @@ export interface NetworkSetting {
   interface: {
     name: string
     type: string
-    ipv4: IP4Address[]
-    ipv6: IP6Address[]
-    configurationMethod: 'manual'
+    ipv4?: IP4Address[]
+    ipv6?: IP6Address[]
+    configurationMethod: 'manual' | 'dhcp'
+    description?: string
   }
   defaultGateway: {
     ipv4Address: string
@@ -44,6 +45,7 @@ export interface NetworkSetting {
 export interface IP4Address {
   address: string
   netmask: string
+  gateway: string
 }
 export interface IP6Address {
   address: string
