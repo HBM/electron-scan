@@ -87,9 +87,6 @@ const createWindow = (): void => {
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
   mainWindow.webContents.on('did-finish-load', () => {
     console.log('Page loaded successfully');
     // Scanner initialisiert
