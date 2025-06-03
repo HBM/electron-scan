@@ -28,7 +28,8 @@
     "package": "npm run build && electron-forge package",
     "make": "npm run build && electron-forge make",
     "publish": "npm run build && electron-forge publish",
-    "lint": "echo \"No linting configured\"",
+    "lint": "npm run eslint && npm run prettier ",
+    "ci:lint": "npm run ci:eslint && npm run ci:prettier && npm run ci:stylelint",
     "postbuild": "cp -r src/icons dist/icons && cp -r src/assets dist/assets"
   },
   "browserslist": {

@@ -4,7 +4,7 @@ import { Socket } from 'dgram'
 jest.mock('dgram', () => {
   // Mock sockets
   const mockSockets: Record<string, any> = {}
-  
+
   return {
     createSocket: jest.fn().mockImplementation(({ type }) => {
       // New mock socket
@@ -28,14 +28,14 @@ jest.mock('dgram', () => {
         send: jest.fn((data, port, address) => {}),
         close: jest.fn()
       }
-      
+
       // Sockets stored
       const id = `${type}-${Date.now()}-${Math.random()}`
       mockSockets[id] = socket
-      
+
       return socket
     }),
-    
+
     __getMockSockets: () => mockSockets
   }
 })
