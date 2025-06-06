@@ -1,23 +1,24 @@
-# Electron App für HBK Device Discovery
+# HBK Device Discovery
 
-## To run HBK Device Discovery Electron app
+## Overview
 
-npm run build
+HBK Device Discovery is a desktop application that allows users to scan, discover, and configure HBK devices across your network. Built with Electron, this application provides a native desktop experience while maintaining the reliability and features of the original web application.
 
-npm start
+## Installation
 
-### In separate terminal
+1. Go to [Releases](https://github.com/HBM/electron-scan/releases) on GitHub
+2. Download the appropriate installation package:
+   - Windows: `HBK.Device.Discovery-[version].Setup.exe`
+   - macOS: `HBK.Device.Discovery-darwin-arm64-[version].zip`
+   - Linux: `electron-scan_[version]_amd64.deb`
+3. Run the installer
 
-npm run mock
+## Basic Usage
 
-## To run automated tests
+1. Launch the application from your desktop
+2. Click "Start Scanning" to discover devices and use the filters
+3. Select any device to view details or configure it
 
-npm test
+---
 
-## To run manual testing
-
-### Terminal 1
-npm run mock
-
-### Terminal 2
-npm run test:config
+© 2025 Hottinger Brüel & Kjær GmbH. All rights reserved.
