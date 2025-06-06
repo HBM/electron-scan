@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
   Box,
   Paper,
@@ -16,124 +16,126 @@ import {
   Stack,
   Divider,
   FormHelperText
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { DeviceFilters as DeviceFiltersType } from '../hooks/useDevices';
+} from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
+import FilterAltIcon from '@mui/icons-material/FilterAlt'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import type { DeviceFilters as DeviceFiltersType } from '../hooks/useDevices'
 
 interface DeviceFiltersProps {
-  filters: DeviceFiltersType;
-  onFilterChange: (newFilters: Partial<DeviceFiltersType>) => void;
-  availableFamilies: string[];
-  availableInterfaces: string[];
-  activeFilterCount: number;
+  readonly filters: DeviceFiltersType
+  readonly onFilterChange: (newFilters: Partial<DeviceFiltersType>) => void
+  readonly availableFamilies: string[]
+  readonly availableInterfaces: string[]
+  readonly activeFilterCount: number
 }
 
-const INTERFACE_ORDER = ['HBM', 'DCP', 'UPNP', 'AVAHI'];
+const INTERFACE_ORDER = ['HBM', 'DCP', 'UPNP', 'AVAHI']
 
 // IPv4 Validierungsmuster
-const IP_REGEX = /^(25[0-5]|2[0-4]\d|[01]?\d\d?)(\.(25[0-5]|2[0-4]\d|[01]?\d\d?)){0,3}$/;
-// Port Validierungsmuster (1-65535)
-const PORT_REGEX = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/;
+const IP_REGEX =
+  /^(25[0-5]|2[0-4]\d|[01]?\d\d?)(\.(25[0-5]|2[0-4]\d|[01]?\d\d?)){0,3}$/
 
-const DeviceFilters: React.FC<DeviceFiltersProps> = ({
+const DeviceFilters = ({
   filters,
   onFilterChange,
   availableFamilies,
   availableInterfaces,
   activeFilterCount
-}) => {
-  const [expanded, setExpanded] = useState(false);
+}: DeviceFiltersProps): React.JSX.Element => {
+  const [expanded, setExpanded] = useState(false)
   // Validierungsfehler
   const [errors, setErrors] = useState({
     ipAddress: false,
-    port: false,
-  });
+    port: false
+  })
 
   // Eingabevalidierung und -sanitisierung vor Aktualisierung der Filter
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    // eslint-disable-next-line @typescript-eslint/prefer-destructuring
+    const { name, value } = event.target
+
     // Name-Eingabe sanitiert
     if (name === 'name') {
       // XSS-Schutz
       // 50 Zeichen Eingabe max
-      const sanitizedValue = value.slice(0, 50).replace(/[^\w\s-_.]/g, '');
-      onFilterChange({ [name]: sanitizedValue });
-      return;
+      const sanitizedValue = value.slice(0, 50).replace(/[^\w\s-_.]/g, '')
+      onFilterChange({ [name]: sanitizedValue })
+      return
     }
 
     // IP-Adresse Validierung
     if (name === 'ipAddress') {
       if (/^[0-9.]*$/.test(value)) {
-        onFilterChange({ [name]: value });
-        const isCompleteIP = value.split('.').length === 4 && value.split('.').every(part => part.length > 0);
-        // Fehler nur anzeigen wenn vollständige aber ungültige IP 
-        setErrors(prev => ({ 
-          ...prev, 
-          ipAddress: isCompleteIP && !IP_REGEX.test(value) 
-        }));
+        onFilterChange({ [name]: value })
+        const isCompleteIP =
+          value.split('.').length === 4 &&
+          value.split('.').every((part) => part.length > 0)
+        // Fehler nur anzeigen wenn vollständige aber ungültige IP
+        setErrors((prev) => ({
+          ...prev,
+          ipAddress: isCompleteIP && !IP_REGEX.test(value)
+        }))
       }
-      return;
+      return
     }
-    
+
     // Port Validierung
     if (name === 'port') {
       if (/^\d*$/.test(value)) {
-        onFilterChange({ [name]: value });
-        
+        onFilterChange({ [name]: value })
+
         if (value.length > 0) {
-          const portNum = parseInt(value, 10);
-          const isValidPort = !isNaN(portNum) && portNum >= 1 && portNum <= 65535;
-          setErrors(prev => ({ ...prev, port: !isValidPort }));
+          const portNum = parseInt(value, 10)
+          const isValidPort =
+            !isNaN(portNum) && portNum >= 1 && portNum <= 65535
+          setErrors((prev) => ({ ...prev, port: !isValidPort }))
         } else {
-          setErrors(prev => ({ ...prev, port: false }));
+          setErrors((prev) => ({ ...prev, port: false }))
         }
       }
-      return;
+      return
     }
 
-    onFilterChange({ [name]: value });
-  };
+    onFilterChange({ [name]: value })
+  }
 
-  const handleCheckboxChange = (filterKey: 'family' | 'interface', value: string) => {
+  const handleCheckboxChange = (
+    filterKey: 'family' | 'interface',
+    value: string
+  ): void => {
     // Validierung der Checkbox-Werte gegen vordefinierte Arrays
     // Schützt vor Injection-Angriffen durch manipulierte Werte
     if (filterKey === 'family' && !availableFamilies.includes(value)) {
-      console.error('Ungültiger Family-Wert: ', value);
-      return;
+      return
     }
-    
-    if (filterKey === 'interface' && !availableInterfaces.includes(value)) {
-      console.error('Ungültiger Interface-Wert: ', value);
-      return;
-    }
-    
-    const currentValues = filters[filterKey] as string[];
-    const newValues = currentValues.includes(value)
-      ? currentValues.filter(item => item !== value)
-      : [...currentValues, value];
-    onFilterChange({ [filterKey]: newValues });
-  };
 
-  const handleClearFilters = () => {
+    if (filterKey === 'interface' && !availableInterfaces.includes(value)) {
+      return
+    }
+
+    const currentValues = filters[filterKey] ?? []
+    const newValues = currentValues.includes(value)
+      ? currentValues.filter((item) => item !== value)
+      : [...currentValues, value]
+    onFilterChange({ [filterKey]: newValues })
+  }
+
+  const handleClearFilters = (): void => {
     // Zurücksetzen der Validierungsfehler beim Zurücksetzen der Filter
     setErrors({
       ipAddress: false,
-      port: false,
-    });
+      port: false
+    })
 
-    onFilterChange({
-      name: '',
-      family: [],
-      interface: [],
-      ipAddress: '',
-      port: ''
-    });
-  };
+    onFilterChange({})
+  }
 
-  const sortedInterfaces = INTERFACE_ORDER.filter(i => availableInterfaces.includes(i));
+  const sortedInterfaces = INTERFACE_ORDER.filter((i) =>
+    availableInterfaces.includes(i)
+  )
 
   return (
     <Paper
@@ -151,29 +153,27 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
           flexDirection: { xs: 'column', md: 'row' },
           alignItems: { xs: 'stretch', md: 'center' },
           gap: 2,
-          mb: 1,
+          mb: 1
         }}
       >
         <Box sx={{ flex: 1 }}>
           <TextField
             fullWidth
-            variant="outlined"
-            size="small"
             name="name"
-            value={filters.name}
             onChange={handleInputChange}
             placeholder="Search by device name"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon color="action" />
-                </InputAdornment>
-              ),
-              // Zusätzliche Sicherheitsmaßnahme (max Länge)
-              inputProps: {
-                maxLength: 50,
+            size="small"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon color="action" />
+                  </InputAdornment>
+                )
               }
             }}
+            value={filters.name}
+            variant="outlined"
           />
         </Box>
         <Box
@@ -187,28 +187,30 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
         >
           {activeFilterCount > 0 && (
             <Chip
-              label={`${activeFilterCount} ${activeFilterCount === 1 ? 'filter' : 'filters'} active`}
               color="primary"
+              label={`${activeFilterCount} ${activeFilterCount === 1 ? 'filter' : 'filters'} active`}
               size="small"
               sx={{ mb: { xs: 1, md: 0 } }}
             />
           )}
           <Button
-            variant="outlined"
             color="primary"
-            size="small"
-            onClick={handleClearFilters}
             disabled={activeFilterCount === 0}
+            onClick={handleClearFilters}
+            size="small"
+            variant="outlined"
           >
             Clear Filters
           </Button>
           <Button
-            variant="contained"
             color="primary"
+            onClick={() => {
+              setExpanded(!expanded)
+            }}
             size="small"
-            onClick={() => setExpanded(!expanded)}
             startIcon={<FilterAltIcon />}
             sx={{ display: { xs: 'inline-flex', lg: 'none' } }}
+            variant="contained"
           >
             {expanded ? 'Hide' : 'Filters'}
           </Button>
@@ -217,13 +219,15 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
 
       <Accordion
         expanded={expanded}
-        onChange={(_event, isExpanded) => setExpanded(isExpanded)}
+        onChange={(_event, isExpanded) => {
+          setExpanded(isExpanded)
+        }}
         sx={{
           mt: 2,
           boxShadow: 'none',
           '&:before': { display: 'none' },
           backgroundColor: 'transparent',
-          '&.Mui-expanded': { margin: 0 },
+          '&.Mui-expanded': { margin: 0 }
         }}
       >
         <AccordionSummary
@@ -236,34 +240,46 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
             display: { xs: 'none', lg: 'flex' }
           }}
         >
-          <Typography sx={{ display: 'flex', alignItems: 'center', fontWeight: 500 }}>
-            <FilterAltIcon sx={{ mr: 1, fontSize: 20, display: { xs: 'none', lg: 'block' } }} />
+          <Typography
+            sx={{ display: 'flex', alignItems: 'center', fontWeight: 500 }}
+          >
+            <FilterAltIcon
+              sx={{ mr: 1, fontSize: 20, display: { xs: 'none', lg: 'block' } }}
+            />
             Advanced Filters
           </Typography>
         </AccordionSummary>
         <AccordionDetails sx={{ p: { xs: 1, md: 2 }, pt: { xs: 2, lg: 1 } }}>
           <Stack
             direction={{ xs: 'column', md: 'row' }}
+            divider={
+              <Divider
+                flexItem
+                orientation="vertical"
+                sx={{ display: { xs: 'none', md: 'block' } }}
+              />
+            }
             spacing={3}
-            divider={<Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'block' } }} />}
           >
             {/* Family Filter */}
             <Box sx={{ flex: 1 }}>
-              <Typography variant="subtitle2" fontWeight="medium" gutterBottom>
+              <Typography fontWeight="medium" gutterBottom variant="subtitle2">
                 Family Type
               </Typography>
               <FormGroup>
                 <Stack direction="row" flexWrap="wrap" spacing={1}>
                   {availableFamilies.map((family) => (
                     <FormControlLabel
-                      key={family}
                       control={
                         <Checkbox
-                          checked={filters.family.includes(family)}
-                          onChange={() => handleCheckboxChange('family', family)}
+                          checked={(filters.family ?? []).includes(family)}
+                          onChange={() => {
+                            handleCheckboxChange('family', family)
+                          }}
                           size="small"
                         />
                       }
+                      key={family}
                       label={<Typography variant="body2">{family}</Typography>}
                       sx={{ minWidth: 120, mr: 2 }}
                     />
@@ -274,21 +290,23 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
 
             {/* Interface Filter */}
             <Box sx={{ flex: 1 }}>
-              <Typography variant="subtitle2" fontWeight="medium" gutterBottom>
+              <Typography fontWeight="medium" gutterBottom variant="subtitle2">
                 Interface Type
               </Typography>
               <FormGroup>
                 <Stack direction="row" flexWrap="wrap" spacing={1}>
                   {sortedInterfaces.map((iface) => (
                     <FormControlLabel
-                      key={iface}
                       control={
                         <Checkbox
-                          checked={filters.interface.includes(iface)}
-                          onChange={() => handleCheckboxChange('interface', iface)}
+                          checked={(filters.interface ?? []).includes(iface)}
+                          onChange={() => {
+                            handleCheckboxChange('interface', iface)
+                          }}
                           size="small"
                         />
                       }
+                      key={iface}
                       label={<Typography variant="body2">{iface}</Typography>}
                       sx={{ minWidth: 120, mr: 2 }}
                     />
@@ -300,63 +318,58 @@ const DeviceFilters: React.FC<DeviceFiltersProps> = ({
 
           {/* Network Filter */}
           <Box sx={{ mt: 3 }}>
-            <Typography variant="subtitle2" fontWeight="medium" gutterBottom sx={{ mt: 1 }}>
+            <Typography
+              fontWeight="medium"
+              gutterBottom
+              sx={{ mt: 1 }}
+              variant="subtitle2"
+            >
               Network
             </Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <Box sx={{ width: '100%' }}>
                 <TextField
+                  error={errors.ipAddress}
                   fullWidth
                   label="IP Address"
                   name="ipAddress"
-                  value={filters.ipAddress}
                   onChange={handleInputChange}
-                  size="small"
-                  variant="outlined"
                   placeholder="e.g. 172.19.190.76"
-                  error={errors.ipAddress}
-                  InputProps={{
-                    inputProps: {
-                      maxLength: 15,
-                    }
-                  }}
+                  size="small"
+                  value={filters.ipAddress}
+                  variant="outlined"
                 />
-                {errors.ipAddress && (
+                {errors.ipAddress ? (
                   <FormHelperText error>
                     Please provide a valid IP-Address
                   </FormHelperText>
-                )}
+                ) : null}
               </Box>
               <Box sx={{ width: '100%' }}>
                 <TextField
+                  error={errors.port}
                   fullWidth
                   label="Port"
                   name="port"
-                  value={filters.port}
                   onChange={handleInputChange}
-                  size="small"
-                  variant="outlined"
                   placeholder="e.g. 80"
+                  size="small"
                   type="text"
-                  error={errors.port}
-                  InputProps={{
-                    inputProps: {
-                      maxLength: 5,
-                    }
-                  }}
+                  value={filters.port}
+                  variant="outlined"
                 />
-                {errors.port && (
+                {errors.port ? (
                   <FormHelperText error>
                     Please provide a valid Port (1-65535)
                   </FormHelperText>
-                )}
+                ) : null}
               </Box>
             </Stack>
           </Box>
         </AccordionDetails>
       </Accordion>
     </Paper>
-  );
-};
+  )
+}
 
-export default DeviceFilters;
+export default DeviceFilters

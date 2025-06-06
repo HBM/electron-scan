@@ -21,7 +21,7 @@ export interface ConfigMessage {
 
 export class HBKScanner extends EventEmitter {
   #id = 0
-  #socket: Socket
+  #socket: Socket | undefined
   readonly #sendSocket: Socket
 
   constructor() {
@@ -31,21 +31,21 @@ export class HBKScanner extends EventEmitter {
     this.#sendSocket.bind(31417, '0.0.0.0', () => {
       this.#sendSocket.addMembership('239.255.77.77')
     })
-    //this.#sendSocket.bind(31417, '239.255.77.77')
   }
 
   startScanning = (): void => {
-    this.#socket = dgram.createSocket({ type: 'udp4', reuseAddr: true })
-    this.#socket.bind(31416, '0.0.0.0', () => {
-      this.#socket.addMembership('239.255.77.76')
+    const sock = dgram.createSocket({ type: 'udp4', reuseAddr: true })
+    sock.bind(31416, '0.0.0.0', () => {
+      sock.addMembership('239.255.77.76')
     })
-    this.#socket.on('message', (msg: Buffer) => {
+    sock.on('message', (msg: Buffer) => {
       try {
         this.emit(HBKDEVICE, JSON.parse(msg.toString()))
       } catch (ex) {
         this.emit('error', `invalid json: ${msg.toString()}`)
       }
     })
+    this.#socket = sock
   }
 
   configureDevice = (msg: ConfigMessage): void => {
@@ -60,18 +60,10 @@ export class HBKScanner extends EventEmitter {
   }
 
   stopScanning = (): void => {
-    try {
-      if (this.#socket) {
-        try {
-          this.#socket.close();
-        } catch (err) {
-          console.log('Socket already closed or invalid state:', err);
-        }
-      }
-      // Cleanup code
-    } catch (error) {
-      console.error('Error in stopScanning:', error);
+    if (this.#socket != null) {
+      this.#socket.close()
     }
+    // Cleanup code
   }
 
   addListener<T extends typeof HBKDEVICE | 'error'>(

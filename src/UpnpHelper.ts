@@ -118,8 +118,7 @@ export class UPNPSocket {
         const device = parseUpnpDevice(res)
         try {
           cb(device)
-        } catch {
-        }
+        } catch {}
       })
   }
 

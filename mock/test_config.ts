@@ -4,9 +4,7 @@ import { HBKDEVICE } from '../src/Types'
 const scanner = new HBKScanner()
 
 // Device announcements
-scanner.addListener(HBKDEVICE, (device) => {
-  console.log('Found device:', device)
-  
+scanner.addListener(HBKDEVICE, () => {
   // Device found -> send configuration
   const configMessage = {
     device: {
@@ -25,7 +23,6 @@ scanner.addListener(HBKDEVICE, (device) => {
     ttl: 120
   }
 
-  console.log('Sending configuration:', configMessage)
   scanner.configureDevice(configMessage)
 })
 
