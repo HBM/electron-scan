@@ -1,7 +1,7 @@
 {
   "name": "electron-scan",
   "productName": "HBK Device Discovery",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Electron App für HBK Device Discovery",
   "main": "dist/index.js",
   "scripts": {
@@ -30,7 +30,7 @@
     "publish": "npm run build && electron-forge publish",
     "lint": "npm run eslint && npm run prettier ",
     "ci:lint": "npm run ci:eslint && npm run ci:prettier && npm run ci:stylelint",
-    "postbuild": "cp -r src/icons dist/icons && cp -r src/assets dist/assets"
+    "postbuild": "node -e \"const fs = require('fs'); const path = require('path'); const copyDir = (src, dst) => { if (!fs.existsSync(dst)) fs.mkdirSync(dst, {recursive: true}); for (const item of fs.readdirSync(src, {withFileTypes: true})) { const srcPath = path.join(src, item.name); const dstPath = path.join(dst, item.name); if (item.isDirectory()) copyDir(srcPath, dstPath); else fs.copyFileSync(srcPath, dstPath); }}; copyDir('src/icons', 'dist/icons'); copyDir('src/assets', 'dist/assets');\""
   },
   "browserslist": {
     "production": [
