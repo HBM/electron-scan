@@ -2,7 +2,7 @@
 
 ## Overview
 
-HBK Device Discovery is a desktop application that allows users to scan, discover, and configure HBK devices across your network. Built with Electron, this application provides a native desktop experience while maintaining the reliability and features of the original web application.
+HBK Device Discovery is a desktop application that allows users to scan, discover, and configure HBK devices across their local network. Built with Electron, this application provides a native desktop experience while maintaining the reliability and features of the original web application.
 
 ## Installation
 
