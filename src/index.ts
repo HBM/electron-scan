@@ -74,6 +74,10 @@ const initializeScanner = (mainWindow?: BrowserWindowType): void => {
     }
   })
 
+  // Start scanning automatically when initialized
+  scanner.startScanning()
+  mainWindow?.webContents.send('scanner-status', 'running')
+
   // Error events
   scanner.addListener('error', (error) => {
     if (mainWindow != null && !mainWindow.isDestroyed()) {

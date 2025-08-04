@@ -27,7 +27,7 @@ const DeviceScanner: React.FC<DeviceScannerProps> = ({
       boxShadow: '0 4px 6px rgba(10, 10, 10, 0.15)'
     }}
   >
-    <Button
+    {/*     <Button
       color={isScanning ? 'error' : 'primary'}
       onClick={isScanning ? onStopScan : onStartScan}
       startIcon={isScanning ? <StopIcon /> : <SearchIcon />}
@@ -40,7 +40,7 @@ const DeviceScanner: React.FC<DeviceScannerProps> = ({
       variant="contained"
     >
       {isScanning ? 'Stop Scanning' : 'Start Scanning'}
-    </Button>
+    </Button> */}
   </Paper>
 )
 
