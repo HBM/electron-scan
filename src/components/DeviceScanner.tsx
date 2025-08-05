@@ -26,22 +26,7 @@ const DeviceScanner: React.FC<DeviceScannerProps> = ({
       backgroundColor: 'white',
       boxShadow: '0 4px 6px rgba(10, 10, 10, 0.15)'
     }}
-  >
-    {/*     <Button
-      color={isScanning ? 'error' : 'primary'}
-      onClick={isScanning ? onStopScan : onStartScan}
-      startIcon={isScanning ? <StopIcon /> : <SearchIcon />}
-      sx={{
-        fontSize: '1.1rem',
-        py: 1,
-        px: 2,
-        mr: 2
-      }}
-      variant="contained"
-    >
-      {isScanning ? 'Stop Scanning' : 'Start Scanning'}
-    </Button> */}
-  </Paper>
+  ></Paper>
 )
 
 export default DeviceScanner
