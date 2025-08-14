@@ -79,7 +79,9 @@ export const useDevices = (): useDevicesReturn => {
           const { uuid } = device.params.device
           const newDevices = new Map(prevDevices)
 
-          const isNewDevice = !prevDevices.has(uuid)
+          const isNewDevice = !prevDevices.get(uuid)
+
+          const wasOffline = prevDevices.get(uuid) && !prevDevices.get(uuid)?.isOnline
 
           const sanitizedName =
             (device.params.device.name as string | undefined) != null
@@ -105,44 +107,9 @@ export const useDevices = (): useDevicesReturn => {
 
           if (isNewDevice) {
             showAlert(`New device found: ${sanitizedName}`, 'success')
+          } else if (wasOffline) {
+            showAlert(`Device came back online: ${sanitizedName}`, 'info')
           }
-
-          return newDevices
-        })
-      }
-    )
-
-    // Device updates
-    ipcRenderer.on(
-      'hbk-device-updated',
-      (_event, device: { params: DeviceParams }) => {
-        setDevices((prevDevices) => {
-          const { uuid } = device.params.device
-          const newDevices = new Map(prevDevices)
-
-          // Sanitize device name für die UI
-          const sanitizedName =
-            (device.params.device.name as string | undefined) != null
-              ? device.params.device.name.slice(0, 100).replace(/<[^>]*>/g, '')
-              : 'Unkown device'
-
-          // Gerät mit sanitiertem Namen speichern
-          const sanitizedDevice = {
-            ...device,
-            params: {
-              ...device.params,
-              device: {
-                ...device.params.device,
-                name: sanitizedName
-              }
-            }
-          }
-
-          newDevices.set(uuid, {
-            device: sanitizedDevice,
-            lastSeen: Date.now(),
-            isOnline: true
-          })
 
           return newDevices
         })
@@ -180,6 +147,9 @@ export const useDevices = (): useDevicesReturn => {
               isOnline: false
             })
             updated = true
+
+            const deviceName = deviceStatus.device.params.device.name || 'Unknown device'
+            showAlert(`Device went offline: ${deviceName}`, 'info')
           }
         }
 
@@ -190,7 +160,6 @@ export const useDevices = (): useDevicesReturn => {
     return () => {
       ipcRenderer.removeAllListeners('scanner-status')
       ipcRenderer.removeAllListeners('hbk-device-found')
-      ipcRenderer.removeAllListeners('hbk-device-updated')
       ipcRenderer.removeAllListeners('hbk-scanner-error')
       clearInterval(statusCheckInterval)
     }
