@@ -130,7 +130,13 @@ const DeviceFilters = ({
       port: false
     })
 
-    onFilterChange({})
+    onFilterChange({
+      name: '',
+      ipAddress: '',
+      port: '',
+      family: [],
+      interface: []
+    })
   }
 
   const sortedInterfaces = INTERFACE_ORDER.filter((i) =>
