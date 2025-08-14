@@ -125,7 +125,11 @@ void app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (scanner != null) {
-    scanner.stopScanning()
+    try {
+      scanner.stopScanning()
+    } catch (err) {
+      console.warn('Error stopping scanner:', err)
+    }
     scanner = null
   }
   if (process.platform !== 'darwin') {
@@ -135,7 +139,11 @@ app.on('window-all-closed', () => {
 
 process.on('SIGINT', () => {
   if (scanner != null) {
-    scanner.stopScanning()
+    try {
+      scanner.stopScanning()
+    } catch (err) {
+      console.warn('Error stopping scanner:', err)
+    }
     scanner = null
   }
   app.exit(0)
@@ -143,7 +151,11 @@ process.on('SIGINT', () => {
 
 process.on('SIGTERM', () => {
   if (scanner != null) {
-    scanner.stopScanning()
+    try {
+      scanner.stopScanning()
+    } catch (err) {
+      console.warn('Error stopping scanner:', err)
+    }
     scanner = null
   }
   app.exit(0)
@@ -151,7 +163,11 @@ process.on('SIGTERM', () => {
 
 app.on('before-quit', () => {
   if (scanner != null) {
-    scanner.stopScanning()
+    try {
+      scanner.stopScanning()
+    } catch (err) {
+      console.warn('Error stopping scanner:', err)
+    }
     scanner = null
   }
 })

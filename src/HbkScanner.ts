@@ -61,7 +61,12 @@ export class HBKScanner extends EventEmitter {
 
   stopScanning = (): void => {
     if (this.#socket != null) {
-      this.#socket.close()
+      try {
+        this.#socket.close()
+      } catch (err) {
+        console.warn('Socket close warning:', err)
+      }
+      this.#socket = undefined
     }
     // Cleanup code
   }
