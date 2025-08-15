@@ -1,7 +1,7 @@
-# .github/workflows/release.yml
 name: Release app
 on:
-  workflow_dispatch:
+  release:
+    types: [published]
 jobs:
   build:
     strategy:
@@ -23,5 +23,5 @@ jobs:
       - run: npm ci
       - name: Publish app
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run publish
