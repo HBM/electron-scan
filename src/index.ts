@@ -28,6 +28,7 @@ let scanner: HBKScanner | null = null
 
 // Electron setup
 const createWindow = (): void => {
+  if (require('electron-squirrel-startup')) app.quit()
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -72,6 +73,10 @@ const initializeScanner = (mainWindow?: BrowserWindowType): void => {
       mainWindow.webContents.send('hbk-device-found', device)
     }
   })
+
+  // Start scanning automatically when initialized
+  scanner.startScanning()
+  mainWindow?.webContents.send('scanner-status', 'running')
 
   // Error events
   scanner.addListener('error', (error) => {

@@ -13,7 +13,11 @@ const config: ForgeConfig = {
         bin: 'HBK Device Discovery',
         executableName: 'HBK Device Discovery',
         icon: './src/assets/hbk-logo.ico',
-        setupIcon: './src/assets/hbk-logo.ico'
+        setupIcon: './src/assets/hbk-logo.ico',
+        loadingGif: './src/assets/loading.gif',
+        shortcutName: 'HBK Device Discovery',
+        createStartMenuShortcut: true,
+        createDesktopShortcut: true
       }
     },
     {
