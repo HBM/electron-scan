@@ -21,6 +21,10 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      - name: Set package.json version from tag
+        run: |
+          TAG=${GITHUB_REF#refs/tags/v}
+          npm version --no-git-tag-version "$TAG"
       - name: Publish app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
