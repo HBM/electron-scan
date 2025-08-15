@@ -25,6 +25,7 @@ jobs:
         run: |
           TAG=${GITHUB_REF#refs/tags/v}
           npm version --no-git-tag-version "$TAG"
+        shell: bash
       - name: Publish app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
