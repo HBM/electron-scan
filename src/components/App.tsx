@@ -22,7 +22,9 @@ const App = (): React.JSX.Element => {
     clearAlert,
     startScanning,
     stopScanning,
-    configureDevice
+    configureDevice,
+    isFavorite,
+    toggleFavorite
   } = useDevices()
 
   const [configDialogOpen, setConfigDialogOpen] = useState(false)
@@ -119,6 +121,8 @@ const App = (): React.JSX.Element => {
         <DeviceList
           devices={filteredDevices} // filteredDevices anstatt alle devices
           onConfigureDevice={handleOpenConfig}
+          isFavorite={isFavorite}
+          onToggleFavorite={toggleFavorite}
         />
       </Container>
 

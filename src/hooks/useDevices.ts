@@ -38,6 +38,9 @@ interface useDevicesReturn {
     interfaceName: string
   }) => Promise<void>
   availableInterfaces: string[]
+  favorites: Set<String>
+  toggleFavorite: (deviceId: string) => void
+  isFavorite: (deviceId: string) => boolean
 }
 
 // Validierungsmuster für IP und Netmask
@@ -56,6 +59,25 @@ export const useDevices = (): useDevicesReturn => {
 
   // Filtern State
   const [filters, setFilters] = useState<DeviceFilters>({})
+
+  // Favorites storage utilities
+  const favoriten_key = 'device-favorites'
+
+  const loadFavorites = (): Set<string> => {
+    try {
+      const stored = localStorage.getItem(favoriten_key)
+      if (stored) {
+        const parsed = JSON.parse(stored) as string[]
+        return new Set(parsed)
+      }
+    } catch (error) {
+      console.error('Failed to load favorites:', error)
+    }
+    return new Set()
+  }
+
+  // Favoriten
+  const [favorites, setFavorites] = useState<Set<string>>(loadFavorites())
 
   // IPC Listeners
   useEffect(() => {
@@ -423,69 +445,100 @@ export const useDevices = (): useDevicesReturn => {
     return types
   }
 
+  // Für Favoriten
+  const getDeviceIdentifier = (device: { params: DeviceParams }): string => {
+    return `uuid:${device.params.device.uuid}`
+  }
+
   // Gefiltert Geräte Liste
   const filteredDevices = useMemo(() => {
-    try {
-      return Array.from(devices.values()).filter(({ device }) => {
-        try {
-          // Name Filter mit Nullprüfung
-          if (
-            filters.name != null &&
-            filters.name !== '' &&
-            !device.params.device.name
-              .toLowerCase()
-              .includes(filters.name.toLowerCase())
-          ) {
-            return false
-          }
-
-          // Family Filter mit Nullprüfung
-          if (
-            filters.family != null &&
-            filters.family.length > 0 &&
-            !filters.family.includes(device.params.device.familyType)
-          ) {
-            return false
-          }
-
-          // Interface Filter mit sicherer Evaluation
-          if (filters.interface != null && filters.interface.length > 0) {
-            const deviceInterfaces = getInterfaceTypes(device)
-            if (!filters.interface.some((f) => deviceInterfaces.includes(f))) {
-              return false
-            }
-          }
-          const filterIp = filters.ipAddress
-          if (filterIp != null && filterIp !== '') {
-            const ipMatches = (
-              device.params.netSettings.interface.ipv4 ?? []
-            ).some((ip) => ip.address.includes(filterIp))
-
-            if (!ipMatches) {
-              return false
-            }
-          }
-
-          // Port Filter mit Nullprüfung und Fehlerbehandlung
-          const port = filters.port?.trim()
-          if (port != null && port !== '') {
-            const portMatches = (device.params.services ?? []).some(
-              (service) => service.port.toString() === port
-            )
-
-            if (!portMatches) {
-              return false
-            }
-          }
-          return true
-        } catch (err) {
+  try {
+    const filtered = Array.from(devices.values()).filter(({ device }) => {
+      console.log('Checking device:', device.params.device.name, device.params.device.uuid)
+      
+      // Name filtern
+      if (filters.name && filters.name.trim() !== '') {
+        const nameMatch = device.params.device.name
+          .toLowerCase()
+          .includes(filters.name.toLowerCase())
+        console.log(`Name filter: "${filters.name}" -> ${nameMatch}`)
+        if (!nameMatch) {
+          console.log('Device filtered out by name')
           return false
         }
-      })
-    } catch (err) {
-      return []
-    }
-  }, [devices, filters])
+      }
+
+      // Familie filtern
+      if (filters.family && filters.family.length > 0) {
+        const familyMatch = filters.family.includes(device.params.device.familyType)
+        console.log(`Family filter: ${JSON.stringify(filters.family)} -> ${familyMatch}`)
+        if (!familyMatch) {
+          console.log('Device filtered out by family')
+          return false
+        }
+      }
+
+      // Interface filtern
+      if (filters.interface && filters.interface.length > 0) {
+        const deviceInterfaces = getInterfaceTypes(device)
+        const interfaceMatch = filters.interface.some(filterInterface =>
+          deviceInterfaces.includes(filterInterface)
+        )
+        console.log(`Interface filter: ${JSON.stringify(filters.interface)} -> ${interfaceMatch}`)
+        if (!interfaceMatch) {
+          console.log('Device filtered out by interface')
+          return false
+        }
+      }
+
+      // IP-Adresse filtern
+      if (filters.ipAddress && filters.ipAddress.trim() !== '') {
+        const ipAddress = device.params.netSettings.interface.ipv4?.[0]?.address
+        const ipMatch = ipAddress?.includes(filters.ipAddress)
+        console.log(`IP filter: "${filters.ipAddress}" -> ${ipMatch}`)
+        if (!ipMatch) {
+          console.log('Device filtered out by IP')
+          return false
+        }
+      }
+
+      // Port filtern
+      if (filters.port && filters.port.trim() !== '') {
+        const portMatch = device.params.services?.some(service =>
+          service.port?.toString().includes(filters.port!)
+        )
+        console.log(`Port filter: "${filters.port}" -> ${portMatch}`)
+        if (!portMatch) {
+          console.log('Device filtered out by port')
+          return false
+        }
+      }
+
+      console.log('Device passed all filters')
+      return true
+    })
+
+    console.log('Filtered devices count:', filtered.length)
+    console.log('Filtered devices:', filtered.map(d => d.device.params.device.name))
+
+    // Sort: favorites first, then by name
+    return filtered.sort((a, b) => {
+      const aId = getDeviceIdentifier(a.device)
+      const bId = getDeviceIdentifier(b.device)
+      const aIsFav = favorites.has(aId)
+      const bIsFav = favorites.has(bId)
+
+      if (aIsFav && !bIsFav) return -1
+      if (!aIsFav && bIsFav) return 1
+      
+      // Both same favorite status, sort by name
+      return a.device.params.device.name.localeCompare(b.device.params.device.name)
+    })
+  } catch (err) {
+    console.error('Error in filtering:', err)
+    return []
+  }
+}, [devices, filters, favorites])
 
   const availableInterfaces = useMemo(() => {
     const interfaces = new Set<string>()
@@ -499,6 +552,37 @@ export const useDevices = (): useDevicesReturn => {
     return ORDER.filter((i) => interfaces.has(i))
   }, [devices])
 
+  // Favoriten
+  const saveFavorites = (favorites: Set<string>): void => {
+    try {
+      const array = Array.from(favorites)
+      localStorage.setItem(favoriten_key, JSON.stringify(array))
+    } catch (error) {
+      console.error('Failed to save favorites:', error)
+    }
+  }
+
+  // Toggle favorite status
+  const toggleFavorite = useCallback((deviceId: string) => {
+    setFavorites(prevFavorites => {
+      const newFavorites = new Set(prevFavorites)
+      if (newFavorites.has(deviceId)) {
+        newFavorites.delete(deviceId)
+        showAlert('Device removed from favorites', 'info')
+      } else {
+        newFavorites.add(deviceId)
+        showAlert('Device added to favorites', 'success')
+      }
+      saveFavorites(newFavorites)
+      return newFavorites
+    })
+  }, [])
+
+  // Check if device is favorite
+  const isFavorite = useCallback((deviceId: string): boolean => {
+    return favorites.has(deviceId)
+  }, [favorites])
+
   return {
     devices,
     filteredDevices,
@@ -511,6 +595,9 @@ export const useDevices = (): useDevicesReturn => {
     startScanning,
     stopScanning,
     configureDevice,
-    availableInterfaces
+    availableInterfaces,
+    favorites,
+    toggleFavorite,
+    isFavorite
   }
 }

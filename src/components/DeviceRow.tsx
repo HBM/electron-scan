@@ -12,6 +12,8 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
+import StarIcon from '@mui/icons-material/Star'
+import StarBorderIcon from '@mui/icons-material/StarBorder'
 import SettingsIcon from '@mui/icons-material/Settings'
 import type { DeviceParams } from 'Types'
 
@@ -23,15 +25,19 @@ export interface DeviceProps {
 interface DeviceRowProps {
   readonly device: DeviceProps
   readonly isExpanded: boolean
+  readonly isFavorite: boolean
   readonly onToggleDetails: () => void
   readonly onConfigureClick: () => void
+  readonly onToggleFavorite: () => void
 }
 
 const DeviceRow: React.FC<DeviceRowProps> = ({
   device,
   isExpanded,
+  isFavorite,
   onToggleDetails,
-  onConfigureClick
+  onConfigureClick,
+  onToggleFavorite
 }) => {
   const { device: deviceData, isOnline, lastSeen } = device
   const { uuid } = deviceData.params.device
@@ -85,6 +91,17 @@ const DeviceRow: React.FC<DeviceRowProps> = ({
       <TableCell>{uuid}</TableCell>
       <TableCell>{ipAddress}</TableCell>
       <TableCell align="right">
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleFavorite()
+          }}
+          size="small"
+          sx={{ mr: 1 }}
+          color={isFavorite ? 'warning' : 'default'}
+        >
+          {isFavorite ? <StarIcon /> : <StarBorderIcon />}
+        </IconButton>
         <Button
           color="primary"
           onClick={(e) => {
