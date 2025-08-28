@@ -16,8 +16,11 @@ HBK Device Discovery is a desktop application that allows users to scan, discove
 ## Basic Usage
 
 1. Launch the application from your desktop
-2. Click "Start Scanning" to discover devices and use the filters
-3. Select any device to view details or configure it
+2. Use the filters, select any device to view details or configure it and pin favourite devices.
+
+## Future Development
+
+DCP scanning might be integrated into the app in the future.
 
 ---
 
