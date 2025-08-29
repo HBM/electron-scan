@@ -15,6 +15,9 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
 import StarIcon from '@mui/icons-material/Star'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import SettingsIcon from '@mui/icons-material/Settings'
+import WifiIcon from '@mui/icons-material/Wifi'
+import LanIcon from '@mui/icons-material/Lan'
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import type { DeviceParams } from 'Types'
 
 export interface DeviceProps {
@@ -89,7 +92,35 @@ const DeviceRow: React.FC<DeviceRowProps> = ({
       </TableCell>
       <TableCell>{deviceData.params.device.type}</TableCell>
       <TableCell>{uuid}</TableCell>
-      <TableCell>{ipAddress}</TableCell>
+      <TableCell>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {/* Show icon based on interface type */}
+          {(() => {
+            const ifaceType = deviceData.params.netSettings.interface.type
+            if (ifaceType === 'wifi') {
+              return (
+                <Tooltip title="Wi-Fi">
+                  <WifiIcon sx={{ marginRight: 1, color: '#bdbdbd' }} />
+                </Tooltip>
+              )
+            }
+            if (ifaceType === 'ethernet') {
+              return (
+                <Tooltip title="Ethernet">
+                  <LanIcon sx={{ marginRight: 1, color: '#bdbdbd' }} />
+                </Tooltip>
+              )
+            }
+            // Default or unknown interface
+            return (
+              <Tooltip title="Unknown Interface">
+                <HelpOutlineIcon sx={{ marginRight: 1, color: '#bdbdbd' }} />
+              </Tooltip>
+            )
+          })()}
+          {ipAddress}
+        </Box>
+      </TableCell>
       <TableCell align="right">
         <IconButton
           onClick={(e) => {
