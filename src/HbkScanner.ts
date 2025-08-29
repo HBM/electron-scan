@@ -1,6 +1,7 @@
 import EventEmitter from 'events'
 import dgram, { type Socket } from 'dgram'
 import { HBKDEVICE, type cbType } from './Types'
+import os from 'os'
 
 export interface ConfigMessage {
   device: {
@@ -24,6 +25,19 @@ export class HBKScanner extends EventEmitter {
   #socket: Socket | undefined
   readonly #sendSocket: Socket
 
+  static listAllIPv4Interfaces(): { name: string; address: string }[] {
+    const os = require('os')
+    const nets = os.networkInterfaces()
+    const results: { name: string; address: string }[] = []
+    for (const name of Object.keys(nets)) {
+      for (const net of nets[name] || []) {
+        if (net.family === 'IPv4' && !net.internal) {
+          results.push({ name, address: net.address })
+        }
+      }
+    }
+    return results
+  }
   constructor() {
     super()
     this.#socket = dgram.createSocket({ type: 'udp4', reuseAddr: true })
@@ -36,7 +50,22 @@ export class HBKScanner extends EventEmitter {
   startScanning = (): void => {
     const sock = dgram.createSocket({ type: 'udp4', reuseAddr: true })
     sock.bind(31416, '0.0.0.0', () => {
-      sock.addMembership('239.255.77.76')
+      const interfaces = HBKScanner.listAllIPv4Interfaces()
+      console.log('Detected network interfaces:', interfaces)
+
+      for (const iface of interfaces) {
+        try {
+          sock.addMembership('239.255.77.76', iface.address)
+          console.log(
+            `Added membership for interface ${iface.name} (${iface.address})`
+          )
+        } catch (err) {
+          console.warn(
+            `Could not add membership for interface ${iface.name} (${iface.address}):`,
+            err
+          )
+        }
+      }
     })
     sock.on('message', (msg: Buffer) => {
       try {
