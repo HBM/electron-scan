@@ -294,7 +294,7 @@ const DeviceFilters = ({
               </FormGroup>
             </Box>
 
-            {/* Interface Filter */}
+            {/* Interface Filter 
             <Box sx={{ flex: 1 }}>
               <Typography fontWeight="medium" gutterBottom variant="subtitle2">
                 Interface Type
@@ -319,7 +319,7 @@ const DeviceFilters = ({
                   ))}
                 </Stack>
               </FormGroup>
-            </Box>
+            </Box> */}
           </Stack>
 
           {/* Network Filter */}

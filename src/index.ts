@@ -117,6 +117,50 @@ const initializeScanner = (mainWindow?: BrowserWindowType): void => {
   )
 
   mainWindow?.webContents.send('scanner-status', 'stopped')
+
+  let previousInterfaces = HBKScanner.listAllIPv4Interfaces()
+
+  // Check for interface changes every 20 seconds
+  setInterval(() => {
+    const currentInterfaces = HBKScanner.listAllIPv4Interfaces()
+    const hasChanged =
+      JSON.stringify(currentInterfaces) !== JSON.stringify(previousInterfaces)
+
+    if (hasChanged) {
+      console.log('Network interfaces changed. Restarting scanner...')
+
+      previousInterfaces = currentInterfaces
+
+      // Stop and re-instantiate the scanner
+      try {
+        scanner?.stopScanning()
+      } catch (err) {
+        console.warn('Error stopping scanner before re-instantiating:', err)
+      }
+
+      scanner = new HBKScanner()
+
+      // Re-attach listeners
+      scanner.addListener(HBKDEVICE, (device) => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('hbk-device-found', device)
+        }
+      })
+
+      scanner.addListener('error', (error) => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('hbk-scanner-error', error)
+        }
+      })
+
+      // Start scanning again
+      scanner.startScanning()
+      mainWindow?.webContents.send(
+        'scanner-status',
+        'restarted-after-interface-change'
+      )
+    }
+  }, 20000)
 }
 
 void app.whenReady().then(() => {
