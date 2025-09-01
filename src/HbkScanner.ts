@@ -42,7 +42,7 @@ export class HBKScanner extends EventEmitter {
     super()
     this.#socket = dgram.createSocket({ type: 'udp4', reuseAddr: true })
     this.#sendSocket = dgram.createSocket({ type: 'udp4', reuseAddr: true })
-    this.#sendSocket.bind(31417, '0.0.0.0', () => {
+    this.#sendSocket.bind(31416, '0.0.0.0', () => {
       this.#sendSocket.addMembership('239.255.77.77')
     })
   }
