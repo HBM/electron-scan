@@ -266,7 +266,7 @@ export const useDevices = (): useDevicesReturn => {
         }
 
         // Gateway ist optional, aber wenn angegeben, muss es gültig sein
-        if (config.gateway == null || !IP_REGEX.test(config.gateway)) {
+        if (config.gateway && !IP_REGEX.test(config.gateway)) {
           showAlert('Invalid gateway format', 'error')
           return
         }
