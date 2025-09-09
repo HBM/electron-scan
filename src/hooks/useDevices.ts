@@ -96,7 +96,6 @@ export const useDevices = (): useDevicesReturn => {
       'hbk-device-found',
       (_event, device: { params: DeviceParams }) => {
         // eslint-disable-next-line no-console
-        console.log('Found device:', device.params.device.uuid)
         setDevices((prevDevices) => {
           const { uuid } = device.params.device
           const newDevices = new Map(prevDevices)
@@ -453,17 +452,13 @@ export const useDevices = (): useDevicesReturn => {
   // Gefiltert Geräte Liste
   const filteredDevices = useMemo(() => {
   try {
-    const filtered = Array.from(devices.values()).filter(({ device }) => {
-      console.log('Checking device:', device.params.device.name, device.params.device.uuid)
-      
+    const filtered = Array.from(devices.values()).filter(({ device }) => {      
       // Name filtern
       if (filters.name && filters.name.trim() !== '') {
         const nameMatch = device.params.device.name
           .toLowerCase()
           .includes(filters.name.toLowerCase())
-        console.log(`Name filter: "${filters.name}" -> ${nameMatch}`)
         if (!nameMatch) {
-          console.log('Device filtered out by name')
           return false
         }
       }
@@ -471,9 +466,7 @@ export const useDevices = (): useDevicesReturn => {
       // Familie filtern
       if (filters.family && filters.family.length > 0) {
         const familyMatch = filters.family.includes(device.params.device.familyType)
-        console.log(`Family filter: ${JSON.stringify(filters.family)} -> ${familyMatch}`)
         if (!familyMatch) {
-          console.log('Device filtered out by family')
           return false
         }
       }
@@ -484,9 +477,7 @@ export const useDevices = (): useDevicesReturn => {
         const interfaceMatch = filters.interface.some(filterInterface =>
           deviceInterfaces.includes(filterInterface)
         )
-        console.log(`Interface filter: ${JSON.stringify(filters.interface)} -> ${interfaceMatch}`)
         if (!interfaceMatch) {
-          console.log('Device filtered out by interface')
           return false
         }
       }
@@ -495,9 +486,7 @@ export const useDevices = (): useDevicesReturn => {
       if (filters.ipAddress && filters.ipAddress.trim() !== '') {
         const ipAddress = device.params.netSettings.interface.ipv4?.[0]?.address
         const ipMatch = ipAddress?.includes(filters.ipAddress)
-        console.log(`IP filter: "${filters.ipAddress}" -> ${ipMatch}`)
         if (!ipMatch) {
-          console.log('Device filtered out by IP')
           return false
         }
       }
@@ -507,19 +496,13 @@ export const useDevices = (): useDevicesReturn => {
         const portMatch = device.params.services?.some(service =>
           service.port?.toString().includes(filters.port!)
         )
-        console.log(`Port filter: "${filters.port}" -> ${portMatch}`)
         if (!portMatch) {
-          console.log('Device filtered out by port')
           return false
         }
       }
 
-      console.log('Device passed all filters')
       return true
     })
-
-    console.log('Filtered devices count:', filtered.length)
-    console.log('Filtered devices:', filtered.map(d => d.device.params.device.name))
 
     // Sort: favorites first, then by name
     return filtered.sort((a, b) => {
