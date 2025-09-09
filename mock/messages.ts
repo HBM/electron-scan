@@ -54,7 +54,7 @@ export const messages = [
           ipv4: [{ address: '172.19.211.95', netmask: '255.255.0.0' }],
           ipv6: [{ address: 'fe80::209:e5ff:fe00:92b5', prefix: 64 }],
           name: 'end0',
-          type: 'ethernet'
+          type: 'wifi'
         }
       },
       services: [
