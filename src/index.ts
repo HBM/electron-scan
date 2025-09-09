@@ -86,6 +86,10 @@ const initializeScanner = (mainWindow?: BrowserWindowType): void => {
     }
   })
 
+  ipcMain.removeHandler('start-scanning')
+  ipcMain.removeHandler('stop-scanning')
+  ipcMain.removeHandler('configure-device')
+
   // IPC Handlern für scanner kontrolle (events von renderer und renderer anfragen)
 
   ipcMain.handle('start-scanning', () => {
