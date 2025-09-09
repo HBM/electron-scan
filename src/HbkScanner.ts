@@ -1,7 +1,6 @@
 import EventEmitter from 'events'
 import dgram, { type Socket } from 'dgram'
 import { HBKDEVICE, type cbType } from './Types'
-import os from 'os'
 
 export interface ConfigMessage {
   device: {
@@ -42,8 +41,22 @@ export class HBKScanner extends EventEmitter {
     super()
     this.#socket = dgram.createSocket({ type: 'udp4', reuseAddr: true })
     this.#sendSocket = dgram.createSocket({ type: 'udp4', reuseAddr: true })
-    this.#sendSocket.bind(31416, '0.0.0.0', () => {
-      this.#sendSocket.addMembership('239.255.77.77')
+    this.#sendSocket.bind(31417, '0.0.0.0', () => {
+      const interfaces = HBKScanner.listAllIPv4Interfaces()
+
+      for (const iface of interfaces) {
+        try {
+          this.#sendSocket.addMembership('239.255.77.77', iface.address)
+          console.log(
+            `Added membership for interface ${iface.name} (${iface.address})`
+          )
+        } catch (err) {
+          console.warn(
+            `Could not add membership for interface ${iface.name} (${iface.address}):`,
+            err
+          )
+        }
+      }
     })
   }
 
