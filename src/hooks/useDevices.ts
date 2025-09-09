@@ -285,7 +285,6 @@ export const useDevices = (): useDevicesReturn => {
         },
         netSettings: {
           interface: {
-            type: 'ipv4',
             name: config.interfaceName,
             configurationMethod: config.useDhcp ? 'dhcp' : 'manual',
             ipv4: [] as IP4Address[],

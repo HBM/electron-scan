@@ -15,7 +15,7 @@ configSocket.bind(31417, '0.0.0.0', () => {
 // Listening for configuration messages
 configSocket.on('message', (msg) => {
   console.log('Received configuration:')
-  console.log(JSON.parse(msg.toString()))
+  console.log(JSON.stringify(JSON.parse(msg.toString()), null, 2))
 })
 let msgIdx = 0
 // Announcement broadcasting
