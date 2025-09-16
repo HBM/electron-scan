@@ -40,7 +40,7 @@ const AlertMessage: React.FC<AlertMessageProps> = ({
     severity === 'error' ? 'error' : severity === 'success' ? 'success' : 'info'
 
   return (
-    <Collapse in={open}>
+    <Collapse in={open} sx={{ height: '100%', width: '100%' }}>
       <Alert
         action={
           <IconButton
@@ -53,7 +53,16 @@ const AlertMessage: React.FC<AlertMessageProps> = ({
           </IconButton>
         }
         severity={alertSeverity}
-        sx={{ mb: 2, alignItems: 'center' }}
+        sx={{
+          width: '100%',
+          height: '100%',
+          m: 0,
+          boxShadow: 'none',
+          borderRadius: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
       >
         {message}
       </Alert>
