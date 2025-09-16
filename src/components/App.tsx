@@ -3,13 +3,12 @@
 import React, { useState, useMemo } from 'react'
 import { Box, Container } from '@mui/material'
 import AppHeader from './AppHeader'
-import DeviceScanner from './DeviceScanner'
 import DeviceList from './DeviceList'
 import DeviceFilters from './DeviceFilters'
 import ConfigDialog from './ConfigDialog'
 import { useDevices } from '../hooks/useDevices'
-import AlertMessage from './AlertMessage'
 import type { DeviceParams } from 'Types'
+import AlertMessage from './AlertMessage'
 
 const App = (): React.JSX.Element => {
   const {
@@ -96,19 +95,23 @@ const App = (): React.JSX.Element => {
       <AppHeader />
 
       <Container disableGutters maxWidth={false}>
-        <DeviceScanner
-          isScanning={isScanning}
-          onStartScan={startScanning}
-          onStopScan={stopScanning}
-        />
-
-        {alertInfo != null ? (
-          <AlertMessage
-            message={alertInfo.message}
-            onClose={clearAlert}
-            severity={alertInfo.type}
-          />
-        ) : null}
+        <Box sx={{
+          minHeight: 64,
+          backgroundColor: 'white',
+          display: 'flex',
+          flexDirection: 'column',
+          borderRadius: 1,
+          boxShadow: '0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)',
+          mb: 1
+        }}>
+          {alertInfo != null ? (
+            <AlertMessage
+              message={alertInfo.message}
+              onClose={clearAlert}
+              severity={alertInfo.type}
+            />
+          ) : null}
+        </Box>
 
         <DeviceFilters
           activeFilterCount={activeFilterCount}
