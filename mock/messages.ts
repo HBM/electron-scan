@@ -55,6 +55,9 @@ export const messages = [
           ipv6: [{ address: 'fe80::209:e5ff:fe00:92b5', prefix: 64 }],
           name: 'end0',
           type: 'wifi'
+        },
+        defaultGateway: {
+          ipv4Address: '192.168.1.100'
         }
       },
       services: [

@@ -289,7 +289,8 @@ export const useDevices = (): useDevicesReturn => {
             configurationMethod: config.useDhcp ? 'dhcp' : 'manual',
             ipv4: [] as IP4Address[],
             ipv6: [] as IP6Address[]
-          }
+          },
+          defaultGateway: { ipv4Address: config.gateway ?? '' }
         },
         ttl: 120
       }
@@ -299,7 +300,9 @@ export const useDevices = (): useDevicesReturn => {
         configMessage.netSettings.interface.ipv4[0] = {
           address: config.ip,
           netmask: config.netmask,
-          gateway: config.gateway ?? ''
+        }
+        configMessage.netSettings.defaultGateway = {
+          ipv4Address: config.gateway ?? ''
         }
       }
 
@@ -335,7 +338,6 @@ export const useDevices = (): useDevicesReturn => {
                   deviceStatus.device.params.netSettings.interface.ipv4.push({
                     address: config.ip,
                     netmask: config.netmask,
-                    gateway: config.gateway ?? ''
                   })
                 }
               }

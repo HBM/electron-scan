@@ -38,14 +38,13 @@ export interface NetworkSetting {
     configurationMethod: 'manual' | 'dhcp'
     description?: string
   }
-  defaultGateway: {
-    ipv4Address: string
+  defaultGateway?: {
+    ipv4Address?: string
   }
 }
 export interface IP4Address {
   address: string
   netmask: string
-  gateway: string
 }
 export interface IP6Address {
   address: string
