@@ -123,5 +123,6 @@ export const messages = [
         { port: 80, type: 'daqStreamws', path: '/stream' }
       ]
     }
-  }
+  },
+  {"jsonrpc":"2.0","method":"announce","params":{"apiVersion":"1.1","device":{"familyType":"SmartTorque","firmwareVersion":"v1.0.33-4566_7079b2011--clean","name":"T100","type":"T100","uuid":"0009E5AFFE00"},"expiration":15,"netSettings":{"interface":{"ipv4":[{"address":"172.19.192.253","netmask":"255.255.0.0"}],"ipv6":[{"address":"fe80::209:e5ff:feaf:fe00","prefix":64}],"name":"end0","type":"ethernet"}},"services":[{"port":7416,"type":"daqStream"},{"port":80,"type":"http"},{"port":11122,"type":"jetd"},{"path":"/api/jet/","port":11123,"type":"jetws"},{"port":22,"type":"ssh"}],"vendor":{"rotor":{"identNr":"234530042","kCode":"K-T110-500-S-H-M4-U"},"stator":{"kCode":"K-T100-STL-FAN-07-U"}}}}
 ]

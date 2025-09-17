@@ -61,11 +61,7 @@ const DeviceDetails = ({ device }: DeviceDetailsProps): React.JSX.Element => {
 
   const getDeviceWebsite = (): string => {
     const ipv4Address = device.params.netSettings.interface.ipv4?.[0]?.address
-    const ipv6Address = device.params.netSettings.interface.ipv6?.[0]?.address
-    if (ipv6Address != null) {
-      return `http://[${ipv6Address}]`
-    }
-    return ipv4Address != null ? `http://${ipv4Address}` : '#'
+    return `http://${ipv4Address}`
   }
 
   const handleOpenWebsite = (): void => {
