@@ -97,3 +97,6 @@ out/
 /build
 
 junit.xml
+
+# NSIS Installer
+HBK_Device_Discovery_Installer.exe 

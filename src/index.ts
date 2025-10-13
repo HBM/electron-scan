@@ -28,7 +28,6 @@ let scanner: HBKScanner | null = null
 
 // Electron setup
 const createWindow = (): void => {
-  if (require('electron-squirrel-startup')) app.quit()
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
