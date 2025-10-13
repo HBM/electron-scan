@@ -1,5 +1,5 @@
 {
-  "name": "electron-scan",
+  "name": "hbk-device-scanner",
   "productName": "HBK Device Discovery",
   "version": "0.0.6",
   "description": "Electron App für HBK Device Discovery",
