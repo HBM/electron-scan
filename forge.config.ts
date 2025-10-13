@@ -8,7 +8,7 @@ const config: ForgeConfig = {
   },
   makers: [
     {
-      name: '@electron-forge/maker-squirrel',
+     name: '@electron-forge/maker-squirrel',
       platforms: ['win32'],
       config: {
         bin: 'HBK Device Discovery',
@@ -18,7 +18,9 @@ const config: ForgeConfig = {
         loadingGif: './src/assets/loading.gif',
         shortcutName: 'HBK Device Discovery',
         createStartMenuShortcut: true,
-        createDesktopShortcut: true
+        createDesktopShortcut: true,
+        allowElevation: true,
+        noMsi: false
       }
     },
     {
