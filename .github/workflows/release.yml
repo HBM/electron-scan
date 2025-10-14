@@ -34,7 +34,8 @@ jobs:
       - name: Publish app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run publish
+        run: timeout 30m npm run publish
+        shell: bash
       - name: Build custom installer (Windows only)
         if: matrix.os.name == 'windows'
         run: npm run build-installer

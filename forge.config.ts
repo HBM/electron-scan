@@ -9,6 +9,15 @@ const config: ForgeConfig = {
   makers: [
     {
       name: '@electron-forge/maker-zip',
+      platforms: ['win32'],
+      config: {
+        bin: 'HBK Device Discovery',
+        executableName: 'HBK Device Discovery',
+        icon: './src/assets/hbk-logo.ico'
+      }
+    },
+    {
+      name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
       config: {
         bin: 'HBK Device Discovery',
