@@ -10,7 +10,7 @@ HBK Device Discovery is a desktop application that allows users to scan, discove
 2. Download the appropriate installation package:
    - Windows: `HBK_Device_Discovery_Installer.exe`
    - macOS: `HBK.Device.Discovery-darwin-arm64-[version].zip`
-   - Linux: `electron-scan_[version]_amd64.deb`
+   - Linux: `hbk-device-scanner_[version]_amd64.deb`
 3. In Windows, run the installer and follow the instructions. You'll need admin privileges.
 
 ## Basic Usage
