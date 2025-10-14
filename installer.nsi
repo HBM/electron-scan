@@ -7,7 +7,8 @@ InstallDir "$PROGRAMFILES\HBK Device Discovery"
 RequestExecutionLevel admin
 
 ; installer icon
-!define MUI_ICON src\assets\hbk-logo.ico
+!define MUI_ICON "src\assets\hbk-logo.ico"
+!define Icon "src\assets\hbk-logo.ico"
 
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
