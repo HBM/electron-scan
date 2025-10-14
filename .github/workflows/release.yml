@@ -26,7 +26,25 @@ jobs:
           TAG=${GITHUB_REF#refs/tags/v}
           npm version --no-git-tag-version "$TAG"
         shell: bash
+      - name: Install NSIS (Windows only)
+        if: matrix.os.name == 'windows'
+        run: |
+          choco install nsis
+        shell: pwsh
       - name: Publish app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run publish
+      - name: Build custom installer (Windows only)
+        if: matrix.os.name == 'windows'
+        run: npm run build-installer
+      - name: Upload custom installer to release (Windows only)
+        if: matrix.os.name == 'windows'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./HBK_Device_Discovery_Installer.exe
+          asset_name: HBK_Device_Discovery_Installer.exe
+          asset_content_type: application/octet-stream
