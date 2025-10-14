@@ -12,7 +12,7 @@
     "ci:stylelint": "stylelint --allow-empty-input \"./**/*.scss\"",
     "ci:type-check": "tsc --noEmit --skipLibCheck ",
     "build": "tsc && webpack",
-    "build-installer": "npm run package && makensis installer.nsi",
+    "build-installer": "makensis installer.nsi",
     "watch": "webpack --watch",
     "build:scheme": "typescript-json-schema -o dist/Announcement.json --noExtraProps --required src/Types.ts Announcement",
     "prettier": "prettier --write \"./**/*.{js,jsx,ts,tsx,json,html}\"",

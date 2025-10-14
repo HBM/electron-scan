@@ -37,13 +37,13 @@ jobs:
         timeout-minutes: 10
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: electron-forge publish
+        run: npx electron-forge publish
         shell: bash
       - name: Build custom installer (Windows only)
         if: matrix.os.name == 'windows'
         run: |
           $env:PATH += ";C:\Program Files (x86)\NSIS"
-          electron-forge package && makensis installer.nsi
+          makensis installer.nsi
         shell: pwsh
       - name: Upload custom installer to release (Windows only)
         if: matrix.os.name == 'windows'
