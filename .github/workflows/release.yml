@@ -32,9 +32,10 @@ jobs:
           choco install nsis
         shell: pwsh
       - name: Publish app
+        timeout-minutes: 10
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: timeout 30m npm run publish
+        run: npm run publish
         shell: bash
       - name: Build custom installer (Windows only)
         if: matrix.os.name == 'windows'
