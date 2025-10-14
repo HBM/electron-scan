@@ -30,7 +30,7 @@ jobs:
         if: matrix.os.name == 'windows'
         run: |
           choco install nsis
-          echo "C:\Program Files (x86)\NSIS" >> $env:PATH
+          refreshenv
         shell: pwsh
       - name: Publish app
         timeout-minutes: 10
