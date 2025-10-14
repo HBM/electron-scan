@@ -30,7 +30,6 @@ jobs:
         if: matrix.os.name == 'windows'
         run: |
           choco install nsis
-          refreshenv
         shell: pwsh
       - name: Publish app
         timeout-minutes: 10
@@ -40,7 +39,10 @@ jobs:
         shell: bash
       - name: Build custom installer (Windows only)
         if: matrix.os.name == 'windows'
-        run: npm run build-installer
+        run: |
+          $env:PATH += ";C:\Program Files (x86)\NSIS"
+          npm run build-installer
+        shell: pwsh
       - name: Upload custom installer to release (Windows only)
         if: matrix.os.name == 'windows'
         uses: actions/upload-release-asset@v1
