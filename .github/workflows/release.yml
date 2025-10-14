@@ -31,17 +31,19 @@ jobs:
         run: |
           choco install nsis
         shell: pwsh
+      - name: Build app
+        run: npm run build
       - name: Publish app
         timeout-minutes: 10
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run publish
+        run: electron-forge publish
         shell: bash
       - name: Build custom installer (Windows only)
         if: matrix.os.name == 'windows'
         run: |
           $env:PATH += ";C:\Program Files (x86)\NSIS"
-          npm run build-installer
+          electron-forge package && makensis installer.nsi
         shell: pwsh
       - name: Upload custom installer to release (Windows only)
         if: matrix.os.name == 'windows'
