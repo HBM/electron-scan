@@ -2,25 +2,25 @@
 
 ## Overview
 
-HBK Device Discovery is a desktop application that allows users to scan, discover, and configure HBK devices across their local network. Built with Electron, this application provides a native desktop experience while maintaining the reliability and features of the original web application.
+HBK Device Discovery is a desktop application that allows users to scan, discover, and configure HBK devices across their local network. Built with Electron, this application provides a native desktop experience while maintaining the reliability and features of the original internal web service.
 
 ## Installation
 
 1. Go to [Releases](https://github.com/HBM/electron-scan/releases) on GitHub
 2. Download the appropriate installation package:
-   - Windows: `HBK.Device.Discovery-[version].Setup.exe`
+   - Windows: `HBK_Device_Discovery_Installer.exe`
    - macOS: `HBK.Device.Discovery-darwin-arm64-[version].zip`
    - Linux: `electron-scan_[version]_amd64.deb`
-3. Run the installer
+3. In Windows, run the installer and follow the instructions. You'll need admin privileges.
 
 ## Basic Usage
 
-1. Launch the application from your desktop
+1. Launch the application from your desktop. The scanning will start automatically.
 2. You can: Use the filters, select any device to view its details, configure devices and pin favourite devices.
 
 ## Troubleshoot
 
- If the application has been installed in windows and no devices are shown in the app, make sure the HBK device Discovery app is not being blocked by the windows firewall.
+ If the application has been installed in windows and no devices are shown in the app, make sure the HBK Device Discovery app is not being blocked by the windows firewall.
 1. <img width="587" height="29" alt="image" src="https://github.com/user-attachments/assets/621253f5-8445-48ff-b431-30c01a6cdbca" />
 
 
