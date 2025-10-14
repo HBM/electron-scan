@@ -34,4 +34,5 @@ Section "Uninstall"
   Delete "$DESKTOP\HBK Device Discovery.lnk"
   RMDir /r "$SMPROGRAMS\HBK Device Discovery"
   RMDir /r "$INSTDIR"
+  RMDir /r "$LOCALAPPDATA\hbk_device_scan"
 SectionEnd
