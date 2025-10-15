@@ -42,6 +42,7 @@ export interface NetworkSetting {
     configurationMethod: 'manual' | 'dhcp'
     description?: string
   }
+  defaultGateway?: DefaultGateway
 }
 export interface IP4Address {
   address: string
@@ -66,8 +67,7 @@ export interface DeviceParamsConfig {
   device: Device
   defaultGateway?: DefaultGateway
   netSettings: NetworkSettingsConfig
-  services?: service[]
-  expiration: number
+  ttl: number
 }
 export interface DeviceConfig {
   uuid: string

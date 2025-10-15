@@ -73,7 +73,7 @@ const ConfigDialog = ({
 
         setIpAddress(ipv4Config?.address ?? '')
         setNetmask(ipv4Config?.netmask ?? '')
-        setGateway(device.params.defaultGateway?.ipv4Address ?? '')
+        setGateway(device.params.netSettings.defaultGateway?.ipv4Address ?? '')
       }
 
       setConfigChanged(false)
@@ -134,6 +134,12 @@ const ConfigDialog = ({
       } else {
         setErrors((prev) => ({ ...prev, netmask: false }))
       }
+      if (
+        device?.params.netSettings.interface.ipv4 != null &&
+        device.params.netSettings.interface.ipv4[0].netmask !== value
+      ) {
+        setConfigChanged(true)
+      }
     }
   }
 
@@ -169,7 +175,7 @@ const ConfigDialog = ({
 
       if (
         device?.params.netSettings.interface.ipv4 != null &&
-        device.params.defaultGateway?.ipv4Address !== sanitizedValue
+        device.params.netSettings.defaultGateway?.ipv4Address !== sanitizedValue
       ) {
         setConfigChanged(true)
       }
@@ -229,6 +235,10 @@ const ConfigDialog = ({
       interfaceName
     })
   }
+
+  const handleBack = (): void => {
+  setConfirmMode(false)
+}
 
   const handleClose = (): void => {
     setErrors({ ipAddress: false, netmask: false, gateway: false })
@@ -363,23 +373,50 @@ const ConfigDialog = ({
         )}
       </DialogContent>
       <DialogActions>
-        <Button color="inherit" onClick={handleClose}>
-          {confirmMode ? 'Cancel' : 'Close'}
-        </Button>
-        <Button
-          color="primary"
-          disabled={!isFormValid()}
-          onClick={handleSubmit}
-          sx={{
-            backgroundColor: '#103277',
-            '&:hover': {
-              backgroundColor: '#09245a'
-            }
-          }}
-          variant="contained"
-        >
-          {confirmMode ? 'Confirm Configuration' : 'Apply Configuration'}
-        </Button>
+        {confirmMode ? (
+          <>
+            <Button color="inherit" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button color="inherit" onClick={handleBack}>
+              Back
+            </Button>
+            <Button
+              color="primary"
+              disabled={!isFormValid()}
+              onClick={handleSubmit}
+              sx={{
+                backgroundColor: '#103277',
+                '&:hover': {
+                  backgroundColor: '#09245a'
+                }
+              }}
+              variant="contained"
+            >
+              Confirm Configuration
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button color="inherit" onClick={handleClose}>
+              Close
+            </Button>
+            <Button
+              color="primary"
+              disabled={!isFormValid()}
+              onClick={handleSubmit}
+              sx={{
+                backgroundColor: '#103277',
+                '&:hover': {
+                  backgroundColor: '#09245a'
+                }
+              }}
+              variant="contained"
+            >
+              Apply Configuration
+            </Button>
+          </>
+        )}
       </DialogActions>
     </Dialog>
   )

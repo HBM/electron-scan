@@ -283,7 +283,7 @@ export const useDevices = (): useDevicesReturn => {
         device: {
           uuid: sanitizedUuid
         },
-        defaultGateway: {
+        defaultGateway: config.useDhcp ? undefined : {
           ipv4: config.gateway ?? ''
         },
         netSettings: {
