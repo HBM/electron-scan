@@ -16,7 +16,7 @@ import {
   FormControlLabel,
   Alert
 } from '@mui/material'
-import type { DeviceParams, IP4Address } from 'Types'
+import type { DeviceParams, DeviceParamsConfig, IPv4Config } from 'Types'
 
 interface ConfigDialogProps {
   readonly open: boolean
@@ -66,12 +66,10 @@ const ConfigDialog = ({
 
       // IP-Adresse, Netzmaske und Gateway laden
       if (
-        device.params.netSettings.interface.ipv4 != null &&
-        device.params.netSettings.interface.ipv4.length > 0
+        device.params.netSettings.interface.ipv4 != null
       ) {
-        const ipv4Config = device.params.netSettings.interface.ipv4[0] as
-          | IP4Address
-          | undefined
+        const ipv4Array = device.params.netSettings.interface.ipv4
+        const ipv4Config = Array.isArray(ipv4Array) && ipv4Array.length > 0 ? ipv4Array[0] : undefined
 
         setIpAddress(ipv4Config?.address ?? '')
         setNetmask(ipv4Config?.netmask ?? '')

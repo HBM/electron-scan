@@ -1,6 +1,6 @@
 // HbkScanner Modul verwaltet device discovery/scanning und konfiguration
-import { type ConfigMessage, HBKScanner } from './HbkScanner'
-import { HBKDEVICE } from './Types'
+import { HBKScanner } from './HbkScanner'
+import { HBKDEVICE, ConfigMessage } from './Types'
 import * as path from 'path'
 import {
   ipcMain,

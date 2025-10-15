@@ -57,6 +57,33 @@ export interface service {
   path?: string
 }
 
+export interface ConfigMessage {
+  jsonrpc: string
+  method: string
+  params: DeviceParamsConfig
+}
+export interface DeviceParamsConfig {
+  device: Device
+  defaultGateway?: DefaultGateway
+  netSettings: NetworkSettingsConfig
+  services?: service[]
+  expiration: number
+}
+export interface DeviceConfig {
+  uuid: string
+}
+export interface NetworkSettingsConfig {
+  interface: {
+    name: string
+    ipv4?: IPv4Config
+    configurationMethod: 'manual' | 'dhcp'
+  }
+}
+export interface IPv4Config {
+  manualAddress: string
+  manualNetmask: string
+}
+
 export type AvahiType = Service
 
 export interface UpnpType {
