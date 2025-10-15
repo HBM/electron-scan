@@ -14,13 +14,10 @@ const App = (): React.JSX.Element => {
   const {
     devices,
     filteredDevices,
-    isScanning,
-    alertInfo,
+    notifications,
     filters,
     updateFilters,
-    clearAlert,
-    startScanning,
-    stopScanning,
+    removeNotification,
     configureDevice,
     isFavorite,
     toggleFavorite
@@ -95,24 +92,6 @@ const App = (): React.JSX.Element => {
       <AppHeader />
 
       <Container disableGutters maxWidth={false}>
-        <Box sx={{
-          minHeight: 64,
-          backgroundColor: 'white',
-          display: 'flex',
-          flexDirection: 'column',
-          borderRadius: 1,
-          boxShadow: '0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)',
-          mb: 1
-        }}>
-          {alertInfo != null ? (
-            <AlertMessage
-              message={alertInfo.message}
-              onClose={clearAlert}
-              severity={alertInfo.type}
-            />
-          ) : null}
-        </Box>
-
         <DeviceFilters
           activeFilterCount={activeFilterCount}
           availableFamilies={availableFamilies}
@@ -122,7 +101,7 @@ const App = (): React.JSX.Element => {
         />
 
         <DeviceList
-          devices={filteredDevices} // filteredDevices anstatt alle devices
+          devices={filteredDevices}
           onConfigureDevice={handleOpenConfig}
           isFavorite={isFavorite}
           onToggleFavorite={toggleFavorite}
@@ -137,6 +116,17 @@ const App = (): React.JSX.Element => {
           open={configDialogOpen}
         />
       ) : null}
+
+      {notifications.map((notification, index) => (
+        <AlertMessage
+          key={notification.id}
+          message={notification.message}
+          severity={notification.type}
+          onClose={() => removeNotification(notification.id)}
+          autoHideDuration={4000}
+          index={index}
+        />
+      ))}
     </Box>
   )
 }
