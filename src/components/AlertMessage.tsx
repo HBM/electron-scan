@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Alert, type AlertColor, Collapse, IconButton } from '@mui/material'
+import { Snackbar, Alert, type AlertColor, IconButton } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 
 interface AlertMessageProps {
@@ -7,31 +7,56 @@ interface AlertMessageProps {
   readonly severity: 'success' | 'error' | 'info'
   readonly onClose: () => void
   readonly autoHideDuration?: number
+  readonly index?: number
 }
 
 const AlertMessage: React.FC<AlertMessageProps> = ({
   message,
   severity,
   onClose,
-  autoHideDuration = 3000
+  autoHideDuration = 4000,
+  index = 0
 }) => {
-  if (severity === 'success') return null
   const [open, setOpen] = useState(true)
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/init-declarations
     let timer: NodeJS.Timeout
-  }, [severity, autoHideDuration, onClose])
+    if (autoHideDuration > 0) {
+      timer = setTimeout(() => {
+        handleClose()
+      }, autoHideDuration)
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer)
+      }
+    }
+  }, [autoHideDuration])
 
   const handleClose = (): void => {
     setOpen(false)
     setTimeout(onClose, 300)
   }
 
-  const alertSeverity: AlertColor = severity === 'error' ? 'error' : 'info'
+  const alertSeverity: AlertColor =
+    severity === 'error' ? 'error' : severity === 'success' ? 'success' : 'info'
 
   return (
-    <Collapse in={open} sx={{ height: '100%', width: '100%' }}>
+    <Snackbar
+      open={open}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right'
+      }}
+      sx={{
+        transform: `translateY(-${index * 80}px)`,
+        transition: 'transform 0.3s ease-in-out',
+        zIndex: 1400,
+        marginBottom: '1rem',
+        marginRight: '1rem'
+      }}
+    >
       <Alert
         action={
           <IconButton
@@ -57,7 +82,7 @@ const AlertMessage: React.FC<AlertMessageProps> = ({
       >
         {message}
       </Alert>
-    </Collapse>
+    </Snackbar>
   )
 }
 

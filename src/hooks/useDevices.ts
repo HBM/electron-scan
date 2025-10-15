@@ -14,18 +14,22 @@ export interface DeviceFilters {
   port?: string
 }
 
-interface AlertInfo {
+interface NotificationItem {
+  id: string
   message: string
   type: 'success' | 'error' | 'info'
+  timestamp: number
 }
+
 interface useDevicesReturn {
   devices: Map<string, DeviceProps>
   filteredDevices: DeviceProps[]
   filters: DeviceFilters
   updateFilters: (newFilters: Partial<DeviceFilters>) => void
   isScanning: boolean
-  alertInfo: AlertInfo | null
+  notifications: NotificationItem[]
   clearAlert: () => void
+  removeNotification: (id: string) => void
   showAlert: (message: string, type: 'success' | 'error' | 'info') => void
   startScanning: () => void
   stopScanning: () => void
@@ -52,7 +56,7 @@ const NETMASK_REGEX =
 export const useDevices = (): useDevicesReturn => {
   const [devices, setDevices] = useState<Map<string, DeviceProps>>(new Map())
   const [isScanning, setIsScanning] = useState(false)
-  const [alertInfo, setAlertInfo] = useState<AlertInfo | null>(null)
+  const [notifications, setNotifications] = useState<NotificationItem[]>([])
   // Rate-Limiting für Konfigurationsanfragen
   const configRequestTimestamp = useRef<number>(0)
   const CONFIG_COOLDOWN = 2000 // 2 Sekunden Abkühlzeit zwischen Konfigurationsanfragen
@@ -195,19 +199,34 @@ export const useDevices = (): useDevicesReturn => {
     // XSS-Schutz
     const sanitizedMessage = message.slice(0, 200).replace(/<[^>]*>/g, '')
 
-    setAlertInfo({ message: sanitizedMessage, type })
-
-    if (type === 'success' || type === 'info') {
-      setTimeout(() => {
-        setAlertInfo((prevAlertInfo) =>
-          prevAlertInfo?.message === sanitizedMessage ? null : prevAlertInfo
-        )
-      }, 5000)
+    // Skip "new device found" notifications
+    if (sanitizedMessage.toLowerCase().includes('new device found')) {
+      return
     }
+
+    const newNotification: NotificationItem = {
+      id: `${Date.now()}-${Math.random()}`,
+      message: sanitizedMessage,
+      type,
+      timestamp: Date.now()
+    }
+
+    setNotifications((prev) => {
+      const updated = [newNotification, ...prev]
+      // Keep maximum of 4 notifications, remove oldest
+      return updated.slice(0, 4)
+    })
   }
 
+  // Add function to remove specific notification
+  const removeNotification = useCallback((id: string) => {
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== id)
+    )
+  }, [])
+
   const clearAlert = useCallback(() => {
-    setAlertInfo(null)
+    setNotifications([])
   }, [])
 
   const startScanning = useCallback(() => {
@@ -583,8 +602,9 @@ export const useDevices = (): useDevicesReturn => {
     filters,
     updateFilters,
     isScanning,
-    alertInfo,
+    notifications,
     clearAlert,
+    removeNotification,
     showAlert,
     startScanning,
     stopScanning,

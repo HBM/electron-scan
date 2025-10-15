@@ -167,9 +167,6 @@ const DeviceRow: React.FC<DeviceRowProps> = ({
         >
           Configure
         </Button>
-        <IconButton onClick={onToggleDetails} size="small">
-          {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </IconButton>
       </TableCell>
     </TableRow>
   )
