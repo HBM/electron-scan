@@ -8,6 +8,7 @@ export interface HbmType {
 export interface DeviceParams {
   apiVersion: string
   device: Device
+  defaultGateway?: DefaultGateway
   netSettings: NetworkSetting
   services?: service[]
   expiration: number
@@ -29,6 +30,9 @@ export interface Device {
     | 'Other'
   firmwareVersion: string
 }
+export interface DefaultGateway {
+  ipv4Address: string
+}
 export interface NetworkSetting {
   interface: {
     name: string
@@ -37,9 +41,6 @@ export interface NetworkSetting {
     ipv6?: IP6Address[]
     configurationMethod: 'manual' | 'dhcp'
     description?: string
-  }
-  defaultGateway?: {
-    ipv4Address?: string
   }
 }
 export interface IP4Address {

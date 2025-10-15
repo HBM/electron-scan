@@ -75,7 +75,7 @@ const ConfigDialog = ({
 
         setIpAddress(ipv4Config?.address ?? '')
         setNetmask(ipv4Config?.netmask ?? '')
-        setGateway(device.params.netSettings.defaultGateway?.ipv4Address ?? '')
+        setGateway(device.params.defaultGateway?.ipv4Address ?? '')
       }
 
       setConfigChanged(false)
@@ -171,7 +171,7 @@ const ConfigDialog = ({
 
       if (
         device?.params.netSettings.interface.ipv4 != null &&
-        device.params.netSettings.defaultGateway?.ipv4Address !== sanitizedValue
+        device.params.defaultGateway?.ipv4Address !== sanitizedValue
       ) {
         setConfigChanged(true)
       }

@@ -283,26 +283,28 @@ export const useDevices = (): useDevicesReturn => {
         device: {
           uuid: sanitizedUuid
         },
+        defaultGateway: {
+          ipv4: config.gateway ?? ''
+        },
         netSettings: {
           interface: {
             name: config.interfaceName,
+            ipv4: {} as IP4Address,
+            ipv6: {} as IP6Address,
             configurationMethod: config.useDhcp ? 'dhcp' : 'manual',
-            ipv4: [] as IP4Address[],
-            ipv6: [] as IP6Address[]
           },
-          defaultGateway: { ipv4Address: config.gateway ?? '' }
         },
         ttl: 120
       }
 
       // Manueller Konfiguration
       if (!config.useDhcp) {
-        configMessage.netSettings.interface.ipv4[0] = {
+        configMessage.netSettings.interface.ipv4 = {
           address: config.ip,
           netmask: config.netmask,
         }
-        configMessage.netSettings.defaultGateway = {
-          ipv4Address: config.gateway ?? ''
+        configMessage.defaultGateway = {
+          ipv4: config.gateway ?? ''
         }
       }
 

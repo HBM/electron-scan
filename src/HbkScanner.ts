@@ -5,7 +5,10 @@ import { HBKDEVICE, type cbType } from './Types'
 export interface ConfigMessage {
   device: {
     uuid: string
-  }
+  },
+  defaultGateway: {
+    ipv4: string
+  },
   netSettings: {
     interface: {
       name: string
