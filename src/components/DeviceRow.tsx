@@ -94,7 +94,7 @@ const DeviceRow: React.FC<DeviceRowProps> = ({
       <TableCell>{uuid}</TableCell>
       <TableCell>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {/* Show icon based on interface type */}
+          {/* Interface Icon */}
           {(() => {
             const ifaceType = deviceData.params.netSettings.interface.type
             if (ifaceType === 'wifi') {
@@ -111,16 +111,31 @@ const DeviceRow: React.FC<DeviceRowProps> = ({
                 </Tooltip>
               )
             }
-            // Default or unknown interface
             return (
               <Tooltip title="Unknown Interface">
                 <HelpOutlineIcon sx={{ marginRight: 1, color: '#bdbdbd' }} />
               </Tooltip>
             )
           })()}
-          {ipAddress}
+
+          <Tooltip title="copy">
+            <Box
+              onClick={(e) => {
+                e.stopPropagation()
+                navigator.clipboard.writeText(ipAddress).catch((err) => {})
+              }}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': { textDecoration: 'underline' },
+                userSelect: 'none'
+              }}
+            >
+              {ipAddress}
+            </Box>
+          </Tooltip>
         </Box>
       </TableCell>
+
       <TableCell align="right">
         <IconButton
           onClick={(e) => {

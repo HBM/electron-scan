@@ -38,7 +38,7 @@ const DeviceList: React.FC<DeviceListProps> = ({
     const favorites: DeviceProps[] = []
     const others: DeviceProps[] = []
 
-    devices.forEach(device => {
+    devices.forEach((device) => {
       const deviceId = `uuid:${device.device.params.device.uuid}`
       if (isFavorite(deviceId)) {
         favorites.push(device)
@@ -54,12 +54,18 @@ const DeviceList: React.FC<DeviceListProps> = ({
     setExpandedDevice(expandedDevice === uuid ? null : uuid)
   }
 
-  const renderDeviceSection = (sectionDevices: DeviceProps[], title: string) => (
+  const renderDeviceSection = (
+    sectionDevices: DeviceProps[],
+    title: string
+  ) => (
     <>
       {sectionDevices.length > 0 && (
         <>
           <TableRow>
-            <TableCell colSpan={5} sx={{ bgcolor: '#f5f5f5', fontWeight: 600, py: 1 }}>
+            <TableCell
+              colSpan={5}
+              sx={{ bgcolor: '#f5f5f5', fontWeight: 600, py: 1 }}
+            >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Typography variant="subtitle2">{title}</Typography>
                 <Chip
@@ -74,19 +80,19 @@ const DeviceList: React.FC<DeviceListProps> = ({
             <React.Fragment key={device.device.params.device.uuid}>
               <DeviceRow
                 device={device}
-                isExpanded={
-                  expandedDevice === device.device.params.device.uuid
-                }
-                isFavorite={
-                  isFavorite(`uuid:${device.device.params.device.uuid}`)}
+                isExpanded={expandedDevice === device.device.params.device.uuid}
+                isFavorite={isFavorite(
+                  `uuid:${device.device.params.device.uuid}`
+                )}
                 onConfigureClick={() => {
                   onConfigureDevice(device.device)
                 }}
                 onToggleDetails={() => {
                   handleToggleDetails(device.device.params.device.uuid)
                 }}
-                onToggleFavorite={() => 
-                  onToggleFavorite(`uuid:${device.device.params.device.uuid}`)}
+                onToggleFavorite={() =>
+                  onToggleFavorite(`uuid:${device.device.params.device.uuid}`)
+                }
               />
               <TableRow>
                 <TableCell
@@ -104,8 +110,7 @@ const DeviceList: React.FC<DeviceListProps> = ({
                     in={expandedDevice === device.device.params.device.uuid}
                   >
                     <Box sx={{ py: 2 }}>
-                      {expandedDevice ===
-                        device.device.params.device.uuid && (
+                      {expandedDevice === device.device.params.device.uuid && (
                         <DeviceDetails device={device.device} />
                       )}
                     </Box>
@@ -113,8 +118,7 @@ const DeviceList: React.FC<DeviceListProps> = ({
                 </TableCell>
               </TableRow>
             </React.Fragment>
-          ))
-        }
+          ))}
         </>
       )}
     </>
@@ -137,7 +141,7 @@ const DeviceList: React.FC<DeviceListProps> = ({
         {devices.length > 0 && (
           <Chip
             color="primary"
-            label={`${devices.length} ${devices.length === 1 ? 'device discovered' : 'devices discovered'}`}
+            label={`${devices.length}`}
             size="small"
             sx={{
               fontWeight: 500,

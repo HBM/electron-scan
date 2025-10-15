@@ -102,7 +102,8 @@ export const useDevices = (): useDevicesReturn => {
 
           const isNewDevice = !prevDevices.get(uuid)
 
-          const wasOffline = prevDevices.get(uuid) && !prevDevices.get(uuid)?.isOnline
+          const wasOffline =
+            prevDevices.get(uuid) && !prevDevices.get(uuid)?.isOnline
 
           const sanitizedName =
             (device.params.device.name as string | undefined) != null
@@ -169,7 +170,8 @@ export const useDevices = (): useDevicesReturn => {
             })
             updated = true
 
-            const deviceName = deviceStatus.device.params.device.name || 'Unknown device'
+            const deviceName =
+              deviceStatus.device.params.device.name || 'Unknown device'
             showAlert(`Device went offline: ${deviceName}`, 'info')
           }
         }
@@ -299,7 +301,7 @@ export const useDevices = (): useDevicesReturn => {
       if (!config.useDhcp) {
         configMessage.netSettings.interface.ipv4[0] = {
           address: config.ip,
-          netmask: config.netmask,
+          netmask: config.netmask
         }
         configMessage.netSettings.defaultGateway = {
           ipv4Address: config.gateway ?? ''
@@ -337,7 +339,7 @@ export const useDevices = (): useDevicesReturn => {
                 ) {
                   deviceStatus.device.params.netSettings.interface.ipv4.push({
                     address: config.ip,
-                    netmask: config.netmask,
+                    netmask: config.netmask
                   })
                 }
               }
@@ -452,77 +454,82 @@ export const useDevices = (): useDevicesReturn => {
 
   // Gefiltert Geräte Liste
   const filteredDevices = useMemo(() => {
-  try {
-    const filtered = Array.from(devices.values()).filter(({ device }) => {      
-      // Name filtern
-      if (filters.name && filters.name.trim() !== '') {
-        const nameMatch = device.params.device.name
-          .toLowerCase()
-          .includes(filters.name.toLowerCase())
-        if (!nameMatch) {
-          return false
+    try {
+      const filtered = Array.from(devices.values()).filter(({ device }) => {
+        // Name filtern
+        if (filters.name && filters.name.trim() !== '') {
+          const nameMatch = device.params.device.name
+            .toLowerCase()
+            .includes(filters.name.toLowerCase())
+          if (!nameMatch) {
+            return false
+          }
         }
-      }
 
-      // Familie filtern
-      if (filters.family && filters.family.length > 0) {
-        const familyMatch = filters.family.includes(device.params.device.familyType)
-        if (!familyMatch) {
-          return false
+        // Familie filtern
+        if (filters.family && filters.family.length > 0) {
+          const familyMatch = filters.family.includes(
+            device.params.device.familyType
+          )
+          if (!familyMatch) {
+            return false
+          }
         }
-      }
 
-      // Interface filtern
-      if (filters.interface && filters.interface.length > 0) {
-        const deviceInterfaces = getInterfaceTypes(device)
-        const interfaceMatch = filters.interface.some(filterInterface =>
-          deviceInterfaces.includes(filterInterface)
+        // Interface filtern
+        if (filters.interface && filters.interface.length > 0) {
+          const deviceInterfaces = getInterfaceTypes(device)
+          const interfaceMatch = filters.interface.some((filterInterface) =>
+            deviceInterfaces.includes(filterInterface)
+          )
+          if (!interfaceMatch) {
+            return false
+          }
+        }
+
+        // IP-Adresse filtern
+        if (filters.ipAddress && filters.ipAddress.trim() !== '') {
+          const ipAddress =
+            device.params.netSettings.interface.ipv4?.[0]?.address
+          const ipMatch = ipAddress?.includes(filters.ipAddress)
+          if (!ipMatch) {
+            return false
+          }
+        }
+
+        // Port filtern
+        if (filters.port && filters.port.trim() !== '') {
+          const portMatch = device.params.services?.some((service) =>
+            service.port?.toString().includes(filters.port!)
+          )
+          if (!portMatch) {
+            return false
+          }
+        }
+
+        return true
+      })
+
+      // Sort: favorites first, then by name
+      return filtered.sort((a, b) => {
+        const aId = getDeviceIdentifier(a.device)
+        const bId = getDeviceIdentifier(b.device)
+        const aIsFav = favorites.has(aId)
+        const bIsFav = favorites.has(bId)
+
+        if (aIsFav && !bIsFav) return -1
+        if (!aIsFav && bIsFav) return 1
+
+        // Both same favorite status, sort by name
+        return a.device.params.device.name.localeCompare(
+          b.device.params.device.name
         )
-        if (!interfaceMatch) {
-          return false
-        }
-      }
-
-      // IP-Adresse filtern
-      if (filters.ipAddress && filters.ipAddress.trim() !== '') {
-        const ipAddress = device.params.netSettings.interface.ipv4?.[0]?.address
-        const ipMatch = ipAddress?.includes(filters.ipAddress)
-        if (!ipMatch) {
-          return false
-        }
-      }
-
-      // Port filtern
-      if (filters.port && filters.port.trim() !== '') {
-        const portMatch = device.params.services?.some(service =>
-          service.port?.toString().includes(filters.port!)
-        )
-        if (!portMatch) {
-          return false
-        }
-      }
-
-      return true
-    })
-
-    // Sort: favorites first, then by name
-    return filtered.sort((a, b) => {
-      const aId = getDeviceIdentifier(a.device)
-      const bId = getDeviceIdentifier(b.device)
-      const aIsFav = favorites.has(aId)
-      const bIsFav = favorites.has(bId)
-
-      if (aIsFav && !bIsFav) return -1
-      if (!aIsFav && bIsFav) return 1
-      
-      // Both same favorite status, sort by name
-      return a.device.params.device.name.localeCompare(b.device.params.device.name)
-    })
-  } catch (err) {
-    console.error('Error in filtering:', err)
-    return []
-  }
-}, [devices, filters, favorites])
+      })
+    } catch (err) {
+      console.error('Error in filtering:', err)
+      return []
+    }
+  }, [devices, filters, favorites])
 
   const availableInterfaces = useMemo(() => {
     const interfaces = new Set<string>()
@@ -548,7 +555,7 @@ export const useDevices = (): useDevicesReturn => {
 
   // Toggle favorite status
   const toggleFavorite = useCallback((deviceId: string) => {
-    setFavorites(prevFavorites => {
+    setFavorites((prevFavorites) => {
       const newFavorites = new Set(prevFavorites)
       if (newFavorites.has(deviceId)) {
         newFavorites.delete(deviceId)
@@ -563,9 +570,12 @@ export const useDevices = (): useDevicesReturn => {
   }, [])
 
   // Check if device is favorite
-  const isFavorite = useCallback((deviceId: string): boolean => {
-    return favorites.has(deviceId)
-  }, [favorites])
+  const isFavorite = useCallback(
+    (deviceId: string): boolean => {
+      return favorites.has(deviceId)
+    },
+    [favorites]
+  )
 
   return {
     devices,

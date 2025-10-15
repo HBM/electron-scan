@@ -14,13 +14,10 @@ const App = (): React.JSX.Element => {
   const {
     devices,
     filteredDevices,
-    isScanning,
     alertInfo,
     filters,
     updateFilters,
     clearAlert,
-    startScanning,
-    stopScanning,
     configureDevice,
     isFavorite,
     toggleFavorite
@@ -95,15 +92,18 @@ const App = (): React.JSX.Element => {
       <AppHeader />
 
       <Container disableGutters maxWidth={false}>
-        <Box sx={{
-          minHeight: 64,
-          backgroundColor: 'white',
-          display: 'flex',
-          flexDirection: 'column',
-          borderRadius: 1,
-          boxShadow: '0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)',
-          mb: 1
-        }}>
+        <Box
+          sx={{
+            minHeight: 64,
+            backgroundColor: 'white',
+            display: 'flex',
+            flexDirection: 'column',
+            borderRadius: 1,
+            boxShadow:
+              '0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)',
+            mb: 1
+          }}
+        >
           {alertInfo != null ? (
             <AlertMessage
               message={alertInfo.message}

@@ -15,20 +15,12 @@ const AlertMessage: React.FC<AlertMessageProps> = ({
   onClose,
   autoHideDuration = 3000
 }) => {
+  if (severity === 'success') return null
   const [open, setOpen] = useState(true)
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/init-declarations
     let timer: NodeJS.Timeout
-    if (severity === 'success') {
-      timer = setTimeout(() => {
-        setOpen(false)
-        setTimeout(onClose, 300)
-      }, autoHideDuration)
-    }
-    return () => {
-      clearTimeout(timer)
-    }
   }, [severity, autoHideDuration, onClose])
 
   const handleClose = (): void => {
@@ -36,8 +28,7 @@ const AlertMessage: React.FC<AlertMessageProps> = ({
     setTimeout(onClose, 300)
   }
 
-  const alertSeverity: AlertColor =
-    severity === 'error' ? 'error' : severity === 'success' ? 'success' : 'info'
+  const alertSeverity: AlertColor = severity === 'error' ? 'error' : 'info'
 
   return (
     <Collapse in={open} sx={{ height: '100%', width: '100%' }}>
