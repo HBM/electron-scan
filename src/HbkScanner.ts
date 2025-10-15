@@ -1,23 +1,6 @@
 import EventEmitter from 'events'
 import dgram, { type Socket } from 'dgram'
-import { HBKDEVICE, type cbType } from './Types'
-
-export interface ConfigMessage {
-  device: {
-    uuid: string
-  }
-  netSettings: {
-    interface: {
-      name: string
-      ipv4: {
-        manualAddress: string
-        manualNetmask: string
-      }
-      configurationMethod: string
-    }
-  }
-  ttl: number
-}
+import { HBKDEVICE, type cbType, ConfigMessage } from './Types'
 
 export class HBKScanner extends EventEmitter {
   #id = 0

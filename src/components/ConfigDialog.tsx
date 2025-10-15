@@ -16,7 +16,7 @@ import {
   FormControlLabel,
   Alert
 } from '@mui/material'
-import type { DeviceParams, IP4Address } from 'Types'
+import type { DeviceParams, DeviceParamsConfig, IPv4Config } from 'Types'
 
 interface ConfigDialogProps {
   readonly open: boolean
@@ -66,12 +66,10 @@ const ConfigDialog = ({
 
       // IP-Adresse, Netzmaske und Gateway laden
       if (
-        device.params.netSettings.interface.ipv4 != null &&
-        device.params.netSettings.interface.ipv4.length > 0
+        device.params.netSettings.interface.ipv4 != null
       ) {
-        const ipv4Config = device.params.netSettings.interface.ipv4[0] as
-          | IP4Address
-          | undefined
+        const ipv4Array = device.params.netSettings.interface.ipv4
+        const ipv4Config = Array.isArray(ipv4Array) && ipv4Array.length > 0 ? ipv4Array[0] : undefined
 
         setIpAddress(ipv4Config?.address ?? '')
         setNetmask(ipv4Config?.netmask ?? '')
@@ -135,6 +133,12 @@ const ConfigDialog = ({
         }))
       } else {
         setErrors((prev) => ({ ...prev, netmask: false }))
+      }
+      if (
+        device?.params.netSettings.interface.ipv4 != null &&
+        device.params.netSettings.interface.ipv4[0].netmask !== value
+      ) {
+        setConfigChanged(true)
       }
     }
   }
@@ -231,6 +235,10 @@ const ConfigDialog = ({
       interfaceName
     })
   }
+
+  const handleBack = (): void => {
+  setConfirmMode(false)
+}
 
   const handleClose = (): void => {
     setErrors({ ipAddress: false, netmask: false, gateway: false })
@@ -365,23 +373,50 @@ const ConfigDialog = ({
         )}
       </DialogContent>
       <DialogActions>
-        <Button color="inherit" onClick={handleClose}>
-          {confirmMode ? 'Cancel' : 'Close'}
-        </Button>
-        <Button
-          color="primary"
-          disabled={!isFormValid()}
-          onClick={handleSubmit}
-          sx={{
-            backgroundColor: '#103277',
-            '&:hover': {
-              backgroundColor: '#09245a'
-            }
-          }}
-          variant="contained"
-        >
-          {confirmMode ? 'Confirm Configuration' : 'Apply Configuration'}
-        </Button>
+        {confirmMode ? (
+          <>
+            <Button color="inherit" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button color="inherit" onClick={handleBack}>
+              Back
+            </Button>
+            <Button
+              color="primary"
+              disabled={!isFormValid()}
+              onClick={handleSubmit}
+              sx={{
+                backgroundColor: '#103277',
+                '&:hover': {
+                  backgroundColor: '#09245a'
+                }
+              }}
+              variant="contained"
+            >
+              Confirm Configuration
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button color="inherit" onClick={handleClose}>
+              Close
+            </Button>
+            <Button
+              color="primary"
+              disabled={!isFormValid()}
+              onClick={handleSubmit}
+              sx={{
+                backgroundColor: '#103277',
+                '&:hover': {
+                  backgroundColor: '#09245a'
+                }
+              }}
+              variant="contained"
+            >
+              Apply Configuration
+            </Button>
+          </>
+        )}
       </DialogActions>
     </Dialog>
   )

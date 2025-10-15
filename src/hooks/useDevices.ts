@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/prefer-destructuring */
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { ipcRenderer } from 'electron'
-import type { DeviceParams, IP4Address, IP6Address } from 'Types'
+import type { DeviceParams, IP4Address, IP6Address, IPv4Config } from 'Types'
 import type { DeviceProps } from 'components/DeviceRow'
 // Filtern Interface
 export interface DeviceFilters {
@@ -304,26 +304,27 @@ export const useDevices = (): useDevicesReturn => {
         device: {
           uuid: sanitizedUuid
         },
+        defaultGateway: config.useDhcp ? undefined : {
+          ipv4: config.gateway ?? ''
+        },
         netSettings: {
           interface: {
             name: config.interfaceName,
+            ipv4: {} as IPv4Config,
             configurationMethod: config.useDhcp ? 'dhcp' : 'manual',
-            ipv4: [] as IP4Address[],
-            ipv6: [] as IP6Address[]
           },
-          defaultGateway: { ipv4Address: config.gateway ?? '' }
         },
         ttl: 120
       }
 
       // Manueller Konfiguration
       if (!config.useDhcp) {
-        configMessage.netSettings.interface.ipv4[0] = {
-          address: config.ip,
-          netmask: config.netmask
+        configMessage.netSettings.interface.ipv4 = {
+          manualAddress: config.ip,
+          manualNetmask: config.netmask,
         }
-        configMessage.netSettings.defaultGateway = {
-          ipv4Address: config.gateway ?? ''
+        configMessage.defaultGateway = {
+          ipv4: config.gateway ?? ''
         }
       }
 

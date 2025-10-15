@@ -8,6 +8,7 @@ export interface HbmType {
 export interface DeviceParams {
   apiVersion: string
   device: Device
+  defaultGateway?: DefaultGateway
   netSettings: NetworkSetting
   services?: service[]
   expiration: number
@@ -29,6 +30,9 @@ export interface Device {
     | 'Other'
   firmwareVersion: string
 }
+export interface DefaultGateway {
+  ipv4Address: string
+}
 export interface NetworkSetting {
   interface: {
     name: string
@@ -38,9 +42,7 @@ export interface NetworkSetting {
     configurationMethod: 'manual' | 'dhcp'
     description?: string
   }
-  defaultGateway?: {
-    ipv4Address?: string
-  }
+  defaultGateway?: DefaultGateway
 }
 export interface IP4Address {
   address: string
@@ -54,6 +56,32 @@ export interface service {
   type: string
   port: number
   path?: string
+}
+
+export interface ConfigMessage {
+  jsonrpc: string
+  method: string
+  params: DeviceParamsConfig
+}
+export interface DeviceParamsConfig {
+  device: Device
+  defaultGateway?: DefaultGateway
+  netSettings: NetworkSettingsConfig
+  ttl: number
+}
+export interface DeviceConfig {
+  uuid: string
+}
+export interface NetworkSettingsConfig {
+  interface: {
+    name: string
+    ipv4?: IPv4Config
+    configurationMethod: 'manual' | 'dhcp'
+  }
+}
+export interface IPv4Config {
+  manualAddress: string
+  manualNetmask: string
 }
 
 export type AvahiType = Service
