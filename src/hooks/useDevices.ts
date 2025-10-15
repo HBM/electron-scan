@@ -14,18 +14,22 @@ export interface DeviceFilters {
   port?: string
 }
 
-interface AlertInfo {
+interface NotificationItem {
+  id: string
   message: string
   type: 'success' | 'error' | 'info'
+  timestamp: number
 }
+
 interface useDevicesReturn {
   devices: Map<string, DeviceProps>
   filteredDevices: DeviceProps[]
   filters: DeviceFilters
   updateFilters: (newFilters: Partial<DeviceFilters>) => void
   isScanning: boolean
-  alertInfo: AlertInfo | null
+  notifications: NotificationItem[]
   clearAlert: () => void
+  removeNotification: (id: string) => void
   showAlert: (message: string, type: 'success' | 'error' | 'info') => void
   startScanning: () => void
   stopScanning: () => void
@@ -52,7 +56,7 @@ const NETMASK_REGEX =
 export const useDevices = (): useDevicesReturn => {
   const [devices, setDevices] = useState<Map<string, DeviceProps>>(new Map())
   const [isScanning, setIsScanning] = useState(false)
-  const [alertInfo, setAlertInfo] = useState<AlertInfo | null>(null)
+  const [notifications, setNotifications] = useState<NotificationItem[]>([])
   // Rate-Limiting für Konfigurationsanfragen
   const configRequestTimestamp = useRef<number>(0)
   const CONFIG_COOLDOWN = 2000 // 2 Sekunden Abkühlzeit zwischen Konfigurationsanfragen
@@ -102,7 +106,8 @@ export const useDevices = (): useDevicesReturn => {
 
           const isNewDevice = !prevDevices.get(uuid)
 
-          const wasOffline = prevDevices.get(uuid) && !prevDevices.get(uuid)?.isOnline
+          const wasOffline =
+            prevDevices.get(uuid) && !prevDevices.get(uuid)?.isOnline
 
           const sanitizedName =
             (device.params.device.name as string | undefined) != null
@@ -169,7 +174,8 @@ export const useDevices = (): useDevicesReturn => {
             })
             updated = true
 
-            const deviceName = deviceStatus.device.params.device.name || 'Unknown device'
+            const deviceName =
+              deviceStatus.device.params.device.name || 'Unknown device'
             showAlert(`Device went offline: ${deviceName}`, 'info')
           }
         }
@@ -193,19 +199,34 @@ export const useDevices = (): useDevicesReturn => {
     // XSS-Schutz
     const sanitizedMessage = message.slice(0, 200).replace(/<[^>]*>/g, '')
 
-    setAlertInfo({ message: sanitizedMessage, type })
-
-    if (type === 'success' || type === 'info') {
-      setTimeout(() => {
-        setAlertInfo((prevAlertInfo) =>
-          prevAlertInfo?.message === sanitizedMessage ? null : prevAlertInfo
-        )
-      }, 5000)
+    // Skip "new device found" notifications
+    if (sanitizedMessage.toLowerCase().includes('new device found')) {
+      return
     }
+
+    const newNotification: NotificationItem = {
+      id: `${Date.now()}-${Math.random()}`,
+      message: sanitizedMessage,
+      type,
+      timestamp: Date.now()
+    }
+
+    setNotifications((prev) => {
+      const updated = [newNotification, ...prev]
+      // Keep maximum of 4 notifications, remove oldest
+      return updated.slice(0, 4)
+    })
   }
 
+  // Add function to remove specific notification
+  const removeNotification = useCallback((id: string) => {
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== id)
+    )
+  }, [])
+
   const clearAlert = useCallback(() => {
-    setAlertInfo(null)
+    setNotifications([])
   }, [])
 
   const startScanning = useCallback(() => {
@@ -299,7 +320,7 @@ export const useDevices = (): useDevicesReturn => {
       if (!config.useDhcp) {
         configMessage.netSettings.interface.ipv4[0] = {
           address: config.ip,
-          netmask: config.netmask,
+          netmask: config.netmask
         }
         configMessage.netSettings.defaultGateway = {
           ipv4Address: config.gateway ?? ''
@@ -337,7 +358,7 @@ export const useDevices = (): useDevicesReturn => {
                 ) {
                   deviceStatus.device.params.netSettings.interface.ipv4.push({
                     address: config.ip,
-                    netmask: config.netmask,
+                    netmask: config.netmask
                   })
                 }
               }
@@ -452,77 +473,82 @@ export const useDevices = (): useDevicesReturn => {
 
   // Gefiltert Geräte Liste
   const filteredDevices = useMemo(() => {
-  try {
-    const filtered = Array.from(devices.values()).filter(({ device }) => {      
-      // Name filtern
-      if (filters.name && filters.name.trim() !== '') {
-        const nameMatch = device.params.device.name
-          .toLowerCase()
-          .includes(filters.name.toLowerCase())
-        if (!nameMatch) {
-          return false
+    try {
+      const filtered = Array.from(devices.values()).filter(({ device }) => {
+        // Name filtern
+        if (filters.name && filters.name.trim() !== '') {
+          const nameMatch = device.params.device.name
+            .toLowerCase()
+            .includes(filters.name.toLowerCase())
+          if (!nameMatch) {
+            return false
+          }
         }
-      }
 
-      // Familie filtern
-      if (filters.family && filters.family.length > 0) {
-        const familyMatch = filters.family.includes(device.params.device.familyType)
-        if (!familyMatch) {
-          return false
+        // Familie filtern
+        if (filters.family && filters.family.length > 0) {
+          const familyMatch = filters.family.includes(
+            device.params.device.familyType
+          )
+          if (!familyMatch) {
+            return false
+          }
         }
-      }
 
-      // Interface filtern
-      if (filters.interface && filters.interface.length > 0) {
-        const deviceInterfaces = getInterfaceTypes(device)
-        const interfaceMatch = filters.interface.some(filterInterface =>
-          deviceInterfaces.includes(filterInterface)
+        // Interface filtern
+        if (filters.interface && filters.interface.length > 0) {
+          const deviceInterfaces = getInterfaceTypes(device)
+          const interfaceMatch = filters.interface.some((filterInterface) =>
+            deviceInterfaces.includes(filterInterface)
+          )
+          if (!interfaceMatch) {
+            return false
+          }
+        }
+
+        // IP-Adresse filtern
+        if (filters.ipAddress && filters.ipAddress.trim() !== '') {
+          const ipAddress =
+            device.params.netSettings.interface.ipv4?.[0]?.address
+          const ipMatch = ipAddress?.includes(filters.ipAddress)
+          if (!ipMatch) {
+            return false
+          }
+        }
+
+        // Port filtern
+        if (filters.port && filters.port.trim() !== '') {
+          const portMatch = device.params.services?.some((service) =>
+            service.port?.toString().includes(filters.port!)
+          )
+          if (!portMatch) {
+            return false
+          }
+        }
+
+        return true
+      })
+
+      // Sort: favorites first, then by name
+      return filtered.sort((a, b) => {
+        const aId = getDeviceIdentifier(a.device)
+        const bId = getDeviceIdentifier(b.device)
+        const aIsFav = favorites.has(aId)
+        const bIsFav = favorites.has(bId)
+
+        if (aIsFav && !bIsFav) return -1
+        if (!aIsFav && bIsFav) return 1
+
+        // Both same favorite status, sort by name
+        return a.device.params.device.name.localeCompare(
+          b.device.params.device.name
         )
-        if (!interfaceMatch) {
-          return false
-        }
-      }
-
-      // IP-Adresse filtern
-      if (filters.ipAddress && filters.ipAddress.trim() !== '') {
-        const ipAddress = device.params.netSettings.interface.ipv4?.[0]?.address
-        const ipMatch = ipAddress?.includes(filters.ipAddress)
-        if (!ipMatch) {
-          return false
-        }
-      }
-
-      // Port filtern
-      if (filters.port && filters.port.trim() !== '') {
-        const portMatch = device.params.services?.some(service =>
-          service.port?.toString().includes(filters.port!)
-        )
-        if (!portMatch) {
-          return false
-        }
-      }
-
-      return true
-    })
-
-    // Sort: favorites first, then by name
-    return filtered.sort((a, b) => {
-      const aId = getDeviceIdentifier(a.device)
-      const bId = getDeviceIdentifier(b.device)
-      const aIsFav = favorites.has(aId)
-      const bIsFav = favorites.has(bId)
-
-      if (aIsFav && !bIsFav) return -1
-      if (!aIsFav && bIsFav) return 1
-      
-      // Both same favorite status, sort by name
-      return a.device.params.device.name.localeCompare(b.device.params.device.name)
-    })
-  } catch (err) {
-    console.error('Error in filtering:', err)
-    return []
-  }
-}, [devices, filters, favorites])
+      })
+    } catch (err) {
+      console.error('Error in filtering:', err)
+      return []
+    }
+  }, [devices, filters, favorites])
 
   const availableInterfaces = useMemo(() => {
     const interfaces = new Set<string>()
@@ -548,7 +574,7 @@ export const useDevices = (): useDevicesReturn => {
 
   // Toggle favorite status
   const toggleFavorite = useCallback((deviceId: string) => {
-    setFavorites(prevFavorites => {
+    setFavorites((prevFavorites) => {
       const newFavorites = new Set(prevFavorites)
       if (newFavorites.has(deviceId)) {
         newFavorites.delete(deviceId)
@@ -563,9 +589,12 @@ export const useDevices = (): useDevicesReturn => {
   }, [])
 
   // Check if device is favorite
-  const isFavorite = useCallback((deviceId: string): boolean => {
-    return favorites.has(deviceId)
-  }, [favorites])
+  const isFavorite = useCallback(
+    (deviceId: string): boolean => {
+      return favorites.has(deviceId)
+    },
+    [favorites]
+  )
 
   return {
     devices,
@@ -573,8 +602,9 @@ export const useDevices = (): useDevicesReturn => {
     filters,
     updateFilters,
     isScanning,
-    alertInfo,
+    notifications,
     clearAlert,
+    removeNotification,
     showAlert,
     startScanning,
     stopScanning,
