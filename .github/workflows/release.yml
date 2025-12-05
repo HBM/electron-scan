@@ -37,7 +37,7 @@ jobs:
       - name: Create signed installer (Windows only)
         if: matrix.os.name == 'windows'
         run: |
-          choco install nsis windows-sdk-setup -y
+          choco install nsis windows-sdk
           echo "${{ secrets.WIN_CERT_FILE_B64 }}" | base64 -d > win-certificate.pfx
           $signtool = Get-ChildItem -Path 'C:\Program Files (x86)\Windows Kits\10\bin\' -Recurse -Filter signtool.exe | Select-Object -First 1
           $signtool_path = $signtool.FullName
