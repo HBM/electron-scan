@@ -47,13 +47,23 @@ jobs:
           makensis installer.nsi
         shell: pwsh
 
-      - name: Sign installer (Windows only)
-        if: matrix.os.name == 'windows'
+      - name: Sign installer (Windows build on Ubuntu)
+        if: matrix.os.name == 'windows' && matrix.os.image == 'ubuntu-latest'
         run: |
-          [IO.File]::WriteAllBytes('win-certificate.pfx', [Convert]::FromBase64String("${{ secrets.WIN_CERT_FILE_B64 }}"))
-          $cert = Get-PfxCertificate -FilePath "win-certificate.pfx"
-          Set-AuthenticodeSignature -FilePath "HBK_Device_Discovery_Installer.exe" -Certificate $cert
-        shell: pwsh
+          echo "${{ secrets.WIN_CERT_FILE_B64 }}" | base64 -d > win-certificate.pfx
+          openssl pkcs12 -in win-certificate.pfx -nocerts -out key.pem -nodes -passin pass:${{ secrets.WIN_CERT_PASSWORD }}
+          openssl pkcs12 -in win-certificate.pfx -clcerts -nokeys -out cert.pem -passin pass:${{ secrets.WIN_CERT_PASSWORD }}
+          sudo apt-get update && sudo apt-get install -y osslsigncode
+          osslsigncode sign \
+            -certs cert.pem \
+            -key key.pem \
+            -n "HBK Device Discovery" \
+            -i https://www.hbm.com/ \
+            -t http://timestamp.digicert.com \
+            -in HBK_Device_Discovery_Installer.exe \
+            -out HBK_Device_Discovery_Installer-signed.exe
+          mv HBK_Device_Discovery_Installer-signed.exe HBK_Device_Discovery_Installer.exe
+        shell: bash
       - name: Upload custom installer to release (Windows only)
         if: matrix.os.name == 'windows'
         uses: actions/upload-release-asset@v1
