@@ -26,6 +26,12 @@ jobs:
           TAG=${GITHUB_REF#refs/tags/v}
           npm version --no-git-tag-version "$TAG"
         shell: bash
+      - name: Install NSIS (Windows only)
+        if: matrix.os.name == 'windows'
+        run: |
+          choco install nsis
+        shell: pwsh
+
       - name: Build app
         run: npm run build
       - name: Publish app
@@ -34,13 +40,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx electron-forge publish
         shell: bash
-      - name: Create signed installer (Windows only)
+      - name: Build custom installer (Windows only)
         if: matrix.os.name == 'windows'
         run: |
-          choco install nsis
-          echo "${{ secrets.WIN_CERT_FILE_B64 }}" | base64 -d > win-certificate.pfx
           $env:PATH += ";C:\Program Files (x86)\NSIS"
           makensis installer.nsi
+        shell: pwsh
+
+      - name: Sign installer (Windows only)
+        if: matrix.os.name == 'windows'
+        run: |
+          echo "${{ secrets.WIN_CERT_FILE_B64 }}" | base64 -d > win-certificate.pfx
           $cert = Get-PfxCertificate -FilePath "win-certificate.pfx"
           Set-AuthenticodeSignature -FilePath "HBK_Device_Discovery_Installer.exe" -Certificate $cert
         shell: pwsh
