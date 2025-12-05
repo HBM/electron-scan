@@ -50,7 +50,7 @@ jobs:
       - name: Sign installer (Windows only)
         if: matrix.os.name == 'windows'
         run: |
-          echo "${{ secrets.WIN_CERT_FILE_B64 }}" | base64 -d > win-certificate.pfx
+          [IO.File]::WriteAllBytes('win-certificate.pfx', [Convert]::FromBase64String("${{ secrets.WIN_CERT_FILE_B64 }}"))
           $cert = Get-PfxCertificate -FilePath "win-certificate.pfx"
           Set-AuthenticodeSignature -FilePath "HBK_Device_Discovery_Installer.exe" -Certificate $cert
         shell: pwsh
