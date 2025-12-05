@@ -29,7 +29,7 @@ jobs:
       - name: Install NSIS (Windows only)
         if: matrix.os.name == 'windows'
         run: |
-          choco install nsis
+          choco install nsis windows-sdk-setup -y
         shell: pwsh
       - name: Decode certificate file (Windows only)
         if: matrix.os.name == 'windows'
@@ -39,15 +39,11 @@ jobs:
 
       - name: Build app
         env:
-          WIN_CERT_FILE: win-certificate.pfx
-          WIN_CERT_PASSWORD: ${{ secrets.WIN_CERT_PASSWORD }}
         run: npm run build
       - name: Publish app
         timeout-minutes: 10
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WIN_CERT_FILE: win-certificate.pfx
-          WIN_CERT_PASSWORD: ${{ secrets.WIN_CERT_PASSWORD }}
         run: npx electron-forge publish
         shell: bash
       - name: Build custom installer (Windows only)
@@ -60,7 +56,9 @@ jobs:
       - name: Sign installer (Windows only)
         if: matrix.os.name == 'windows'
         run: |
-          & 'C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe' sign /f win-certificate.pfx /p "${{ secrets.WIN_CERT_PASSWORD }}" /tr http://timestamp.digicert.com /td sha256 /fd sha256 HBK_Device_Discovery_Installer.exe
+          $signtool = Get-ChildItem -Path 'C:\Program Files (x86)\Windows Kits\10\bin\' -Recurse -Filter signtool.exe | Select-Object -First 1
+          $signtool_path = $signtool.FullName
+          & $signtool_path sign /f win-certificate.pfx /p "${{ secrets.WIN_CERT_PASSWORD }}" /tr http://timestamp.digicert.com /td sha256 /fd sha256 HBK_Device_Discovery_Installer.exe
         shell: pwsh
       - name: Upload custom installer to release (Windows only)
         if: matrix.os.name == 'windows'
