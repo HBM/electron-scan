@@ -4,7 +4,14 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     osxSign: {},
-    icon: './src/assets/hbk-logo'
+    icon: './src/assets/hbk-logo',
+    certificateFile: process.env.WIN_CERT_FILE,
+    certificatePassword: process.env.WIN_CERT_PASSWORD,
+    win32metadata: {
+      CompanyName: 'HBM',
+      FileDescription: 'HBK Device Discovery',
+      ProductName: 'HBK Device Discovery'
+    }
   },
   makers: [
     {

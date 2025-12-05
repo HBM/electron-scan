@@ -31,12 +31,23 @@ jobs:
         run: |
           choco install nsis
         shell: pwsh
+      - name: Decode certificate file (Windows only)
+        if: matrix.os.name == 'windows'
+        run: |
+          echo "${{ secrets.WIN_CERT_FILE_B64 }}" | base64 -d > win-certificate.pfx
+        shell: bash
+
       - name: Build app
+        env:
+          WIN_CERT_FILE: win-certificate.pfx
+          WIN_CERT_PASSWORD: ${{ secrets.WIN_CERT_PASSWORD }}
         run: npm run build
       - name: Publish app
         timeout-minutes: 10
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WIN_CERT_FILE: win-certificate.pfx
+          WIN_CERT_PASSWORD: ${{ secrets.WIN_CERT_PASSWORD }}
         run: npx electron-forge publish
         shell: bash
       - name: Build custom installer (Windows only)
