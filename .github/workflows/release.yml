@@ -26,17 +26,6 @@ jobs:
           TAG=${GITHUB_REF#refs/tags/v}
           npm version --no-git-tag-version "$TAG"
         shell: bash
-      - name: Install NSIS (Windows only)
-        if: matrix.os.name == 'windows'
-        run: |
-          choco install nsis windows-sdk-setup -y
-        shell: pwsh
-      - name: Decode certificate file (Windows only)
-        if: matrix.os.name == 'windows'
-        run: |
-          echo "${{ secrets.WIN_CERT_FILE_B64 }}" | base64 -d > win-certificate.pfx
-        shell: bash
-
       - name: Build app
         run: npm run build
       - name: Publish app
@@ -45,18 +34,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx electron-forge publish
         shell: bash
-      - name: Build custom installer (Windows only)
+      - name: Create signed installer (Windows only)
         if: matrix.os.name == 'windows'
         run: |
-          $env:PATH += ";C:\Program Files (x86)\NSIS"
-          makensis installer.nsi
-        shell: pwsh
-
-      - name: Sign installer (Windows only)
-        if: matrix.os.name == 'windows'
-        run: |
+          choco install nsis windows-sdk-setup -y
+          echo "${{ secrets.WIN_CERT_FILE_B64 }}" | base64 -d > win-certificate.pfx
           $signtool = Get-ChildItem -Path 'C:\Program Files (x86)\Windows Kits\10\bin\' -Recurse -Filter signtool.exe | Select-Object -First 1
           $signtool_path = $signtool.FullName
+          $env:PATH += ";C:\Program Files (x86)\NSIS"
+          makensis installer.nsi
           & $signtool_path sign /f win-certificate.pfx /p "${{ secrets.WIN_CERT_PASSWORD }}" /tr http://timestamp.digicert.com /td sha256 /fd sha256 HBK_Device_Discovery_Installer.exe
         shell: pwsh
       - name: Upload custom installer to release (Windows only)
