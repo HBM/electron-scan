@@ -38,7 +38,6 @@ jobs:
         shell: bash
 
       - name: Build app
-        env:
         run: npm run build
       - name: Publish app
         timeout-minutes: 10
