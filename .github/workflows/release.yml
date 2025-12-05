@@ -37,13 +37,12 @@ jobs:
       - name: Create signed installer (Windows only)
         if: matrix.os.name == 'windows'
         run: |
-          choco install nsis windows-sdk
+          choco install nsis
           echo "${{ secrets.WIN_CERT_FILE_B64 }}" | base64 -d > win-certificate.pfx
-          $signtool = Get-ChildItem -Path 'C:\Program Files (x86)\Windows Kits\10\bin\' -Recurse -Filter signtool.exe | Select-Object -First 1
-          $signtool_path = $signtool.FullName
           $env:PATH += ";C:\Program Files (x86)\NSIS"
           makensis installer.nsi
-          & $signtool_path sign /f win-certificate.pfx /p "${{ secrets.WIN_CERT_PASSWORD }}" /tr http://timestamp.digicert.com /td sha256 /fd sha256 HBK_Device_Discovery_Installer.exe
+          $cert = Get-PfxCertificate -FilePath "win-certificate.pfx"
+          Set-AuthenticodeSignature -FilePath "HBK_Device_Discovery_Installer.exe" -Certificate $cert
         shell: pwsh
       - name: Upload custom installer to release (Windows only)
         if: matrix.os.name == 'windows'
